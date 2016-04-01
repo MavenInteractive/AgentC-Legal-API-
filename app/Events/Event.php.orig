@@ -1,0 +1,16 @@
+<?php
+
+namespace App\Events;
+
+<<<<<<< HEAD
+abstract class Event
+{
+    //
+=======
+use Illuminate\Queue\SerializesModels;
+
+abstract class Event
+{
+    use SerializesModels;
+>>>>>>> d5bccb4f318cb703bbdfb57687cb86fa40027ee4
+}

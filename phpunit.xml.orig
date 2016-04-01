@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit backupGlobals="false"
+         backupStaticAttributes="false"
+<<<<<<< HEAD
+         bootstrap="bootstrap/autoload.php"
+=======
+         bootstrap="bootstrap/app.php"
+>>>>>>> d5bccb4f318cb703bbdfb57687cb86fa40027ee4
+         colors="true"
+         convertErrorsToExceptions="true"
+         convertNoticesToExceptions="true"
+         convertWarningsToExceptions="true"
+         processIsolation="false"
+<<<<<<< HEAD
+         stopOnFailure="false">
+=======
+         stopOnFailure="false"
+         syntaxCheck="false">
+>>>>>>> d5bccb4f318cb703bbdfb57687cb86fa40027ee4
+    <testsuites>
+        <testsuite name="Application Test Suite">
+            <directory>./tests/</directory>
+        </testsuite>
+    </testsuites>
+    <filter>
+        <whitelist>
+            <directory suffix=".php">app/</directory>
+        </whitelist>
+    </filter>
+    <php>
+        <env name="APP_ENV" value="testing"/>
+        <env name="CACHE_DRIVER" value="array"/>
+<<<<<<< HEAD
+        <env name="SESSION_DRIVER" value="array"/>
+        <env name="QUEUE_DRIVER" value="sync"/>
+=======
+>>>>>>> d5bccb4f318cb703bbdfb57687cb86fa40027ee4
+    </php>
+</phpunit>
