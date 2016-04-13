@@ -45,6 +45,13 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $e)
     {
-        return parent::render($request, $e);
+        if ($e instanceof \League\OAuth2\Server\Exception\OAuthException){
+            return response()->json([
+                'error' => $e->errorType,
+                'error_description' => $e->getMessage()
+            ], $e->httpStatusCode, $e->getHttpHeaders());
+        } else {
+            return parent::render($request, $e);
+        }
     }
 }
