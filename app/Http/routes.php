@@ -47,8 +47,9 @@ Route::group(['prefix' => 'api/v1.0'], function() {
     Route::get('notifications',      ['as' => 'notification.index',        'uses' => 'NotificationController@index']);
 
     Route::get('message-inboxes',    ['as' => 'message-inboxes.index',     'uses' => 'InboxController@index']);
+    Route::post('message-inboxes',    ['as' => 'message-inboxes.update',   'uses' => 'InboxController@update']);
 
     Route::post('favorites',         ['as' => 'favorites.insert',          'uses' => 'FavoriteController@insert']);
-    Route::delete('favorites',         ['as' => 'favorites.delete',          'uses' => 'FavoriteController@destroy']);
+    Route::delete('favorites',         ['as' => 'favorites.delete',        'uses' => 'FavoriteController@destroy']);
 
 });

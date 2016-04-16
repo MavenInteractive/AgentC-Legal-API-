@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Stumble Legal</title>
+        <title>Agent-C Legal</title>
 
-        <link href="https://fonts.googleapis.com/css?family=Lato:100" rel="stylesheet" type="text/css">
+        <link href='https://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet' type='text/css'>
 
         <style>
             html, body {
@@ -15,8 +15,7 @@
                 padding: 0;
                 width: 100%;
                 display: table;
-                font-weight: 100;
-                font-family: 'Lato';
+                font-family: 'Montserrat', sans-serif;
             }
 
             .container {
@@ -32,13 +31,18 @@
 
             .title {
                 font-size: 96px;
+                background-color: #000;
+                color: #fff;
+                padding: 0px 20px 20px;
+                text-decoration: underline;
+                text-transform: uppercase;
             }
         </style>
     </head>
     <body>
         <div class="container">
             <div class="content">
-                <div class="title">Stumble Legal</div>
+                <div class="title">Agent-C Legal</div>
             </div>
         </div>
     </body>
