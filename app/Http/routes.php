@@ -32,7 +32,8 @@ Route::group(['prefix' => 'api/v1.0'], function() {
     Route::get('start-up',           ['as' => 'startup.index',             'uses' => 'StartUpController@index']);
 
     Route::get('associate',          ['as' => 'associate.index',           'uses' => 'AssociateController@index']);
-    Route::post('associate',         ['as' => 'associate.check',           'uses' => 'AssociateController@check']);
+    Route::post('associate',         ['as' => 'associate.check',           'uses' => 'AssociateController@submitAction']);
+
     Route::get('associates',          ['as' => 'associate.all',            'uses' => 'AssociateController@showAll']);
 
     Route::post('associate-devices', ['as' => 'associate-devices.index',   'uses' => 'AssociateDevicesController@index']);
@@ -46,5 +47,8 @@ Route::group(['prefix' => 'api/v1.0'], function() {
     Route::get('notifications',      ['as' => 'notification.index',        'uses' => 'NotificationController@index']);
 
     Route::get('message-inboxes',    ['as' => 'message-inboxes.index',     'uses' => 'InboxController@index']);
-    
+
+    Route::post('favorites',         ['as' => 'favorites.insert',          'uses' => 'FavoriteController@insert']);
+    Route::delete('favorites',         ['as' => 'favorites.delete',          'uses' => 'FavoriteController@destroy']);
+
 });

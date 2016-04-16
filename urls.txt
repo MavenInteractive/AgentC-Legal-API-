@@ -3,17 +3,19 @@ POST: /api/associate-devices/       -- Done
 GET:  /api/ping/
 GET:  /api/associate/               -- Done
 POST: /api/associate/               -- Done
-PUT:  /api/associate/
+POST: /api/associate/               -- Done
+POST: /api/associate/               -- Done
 POST: /api/photo
-PUT:  /api/associate/
-PUT:  /api/associate/
+POST: /api/associate/               -- Done
+POST: /api/associate/               -- Done
 POST: /api/forgot/
 GET:  /api/courts/                   -- Done
 GET:  /api/search/                   -- Done
 GET:  /api/schedules/
 GET:  /api/associates                -- Done
 GET:  /api/search/                   -- Done
-POST: /api/favorites/
+POST: /api/favorites/                -- Done
+DEL:  /api/favorites/                -- Done
 GET:  /api/notifications/            -- Done
 GET:  /api/message-inboxes/          -- Done
 POST: /api/message-inboxes/
@@ -28,20 +30,3 @@ DEL:  /api/service-requests/
 PUT:  /api/service-requests/
 PUT:  /api/service-requests/
 PUT:  /api/service-requests/
-
-
-Search courts:
-URI: /api/search/
-Method: GET
-Params:
-entity: (required) <alphanumeric (fixed value = “courts”)>
-query: (required)<alphanumeric (search string)>
-Successful response data: Array of Court records
-
-Search associates
-URI: /api/search/
-Method: GET
-Params:
-entity: (required) <alphanumeric (fixed value = “associates”)>
-query: (required)<alphanumeric (search string)>
-Successful response data: Array of Associate records
