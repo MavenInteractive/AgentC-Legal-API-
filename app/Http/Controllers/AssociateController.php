@@ -40,7 +40,7 @@ class AssociateController extends Controller
                                             array(
                                                  'email'                  => $input['email'],
                                                  'username'               => $input['username'],
-                                                 'password'               => $input['password'],
+                                                 'password'               => Hash::make($input['password']),
                                                  'fullname'               => $input['fullname'],
                                                  'phone'                  => $input['phone'],
                                                  'law_firm'               => $input['law_firm'],
@@ -136,7 +136,7 @@ class AssociateController extends Controller
 
                     return response()->json($result);
                     break;
-                    
+
                 case 'view':
                     $input = \Request::only('email','username','password','status');
                     $result = Associate::select('email','username','password','status')
