@@ -28,7 +28,7 @@ Route::post('oauth/access-token', function() {
     return Response::json(Authorizer::issueAccessToken());
 });
 
-Route::group(['prefix' => 'api/v1.0', 'middleware' => 'oauth'], function() {
+Route::group(['prefix' => 'api/v1.0'], function() {
     Route::get('start-up',           ['as' => 'startup.index',             'uses' => 'StartUpController@index']);
 
     Route::get('associate',          ['as' => 'associate.index',           'uses' => 'AssociateController@index']);
