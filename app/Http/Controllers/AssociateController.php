@@ -151,7 +151,6 @@ class AssociateController extends Controller
             }
 
         } catch (\Exception $error) {
-            dd($error);
             return response()->json(['error' => 'bad_request'], Response::HTTP_BAD_REQUEST);
         }
     }
@@ -161,6 +160,14 @@ class AssociateController extends Controller
             $result = Associate::all()->sortBy('fullname');
             return response()->json($result);
         } catch (\Exception $error) {
+            return response()->json(['error' => 'bad_request'], Response::HTTP_BAD_REQUEST);
+        }
+    }
+
+    public function forgot(){
+        try{
+            $input = \Request::only('email');
+        } catch(\Exception $error){
             return response()->json(['error' => 'bad_request'], Response::HTTP_BAD_REQUEST);
         }
     }
