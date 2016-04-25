@@ -28,13 +28,11 @@ Route::post('oauth/access-token', function() {
     return Response::json(Authorizer::issueAccessToken());
 });
 
-Route::post('associate',         ['as' => 'associate.check',           'uses' => 'AssociateController@submitAction']);
-
 Route::group(['prefix' => 'api/v1.0'], function() {
     Route::get('start-up',           ['as' => 'startup.index',             'uses' => 'StartUpController@index']);
 
     Route::get('associate',          ['as' => 'associate.index',           'uses' => 'AssociateController@index']);
-
+    Route::post('associate',         ['as' => 'associate.check',           'uses' => 'AssociateController@submitAction']);
 
     Route::get('associates',          ['as' => 'associate.all',            'uses' => 'AssociateController@showAll']);
 
