@@ -13,7 +13,7 @@ class PasswordGrantVerifier
         'password' => $password,
       ];
 
-      if (Auth::once($credentials)) {
+      if (Auth::attempt($credentials)) {
           return Auth::user()->id;
       }
 
