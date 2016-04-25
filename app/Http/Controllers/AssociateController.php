@@ -8,6 +8,7 @@ use App\Http\Requests;
 use App\Associate;
 use App\Favorite;
 
+
 class AssociateController extends Controller
 {
     public function index(){
@@ -40,7 +41,7 @@ class AssociateController extends Controller
                                             array(
                                                  'email'                  => $input['email'],
                                                  'username'               => $input['username'],
-                                                 'password'               => Hash::make($input['password']),
+                                                 'password'               => \Hash::make($input['password']),
                                                  'fullname'               => $input['fullname'],
                                                  'phone'                  => $input['phone'],
                                                  'law_firm'               => $input['law_firm'],
@@ -63,7 +64,7 @@ class AssociateController extends Controller
                     $associate = Associate::where('id',$input['associate_id'])->update([
                         'email'     => $input['email'],
                         'username' => $input['username'],
-                        'password' => $input['password'],
+                        'password' => \Hash::make($input['password']),
                         'fullname' => $input['fullname'],
                         'phone' => $input['phone'],
                         'law_firm' => $input['law_firm'],
