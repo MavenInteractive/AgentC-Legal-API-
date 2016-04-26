@@ -25,7 +25,11 @@ Route::get('/register',function(){$user = new App\User();
 
 
 Route::post('oauth/access-token', function() {
-    return Response::json(Authorizer::issueAccessToken());
+    $response = Authorizer::issueAccessToken();
+    if(Auth::user()){
+        return Response::json(Auth::user());
+    }
+    return Response::json($response);
 });
 
 Route::group(['prefix' => 'api/v1.0'], function() {
