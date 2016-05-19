@@ -21,4 +21,24 @@ class InboxController extends Controller
 			return response()->json(['error' => 'bad_request'], Response::HTTP_BAD_REQUEST);
 		}
     }
+
+    public function add(){
+        try{
+            $input = \Request::only('channel','message','receiver_associate_id','sender_associate_id');
+
+            $insertedId = Inbox::insertGetId(
+                                    array(
+                                         'sender_associate_id'      => $input['sender_associate_id'],
+                                         'receiver_associate_id'    => $input['receiver_associate_id'],
+                                         'channel'                  => $input['channel'],
+                                         'message'                  => $input['message']
+                                        )
+                                    );
+
+            $result = Inbox::find($insertedId);
+            return response()->json($result);
+        } catch(\Exception $error){
+            return response()->json(['error' => 'bad_request'], Response::HTTP_BAD_REQUEST);
+        }
+    }
 }
