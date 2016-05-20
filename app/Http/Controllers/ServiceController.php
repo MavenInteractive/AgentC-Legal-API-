@@ -86,7 +86,16 @@ class ServiceController extends Controller
 
     public function action(){
         try {
-            $input = \Request::only('associate_id', 'court_detail_id', 'date_time', 'request_type_id', 'notes', 'assignees','action');
+            $input = \Request::only('schedule_id','status','assigned_associate_id');
+            $insertedId = Service::insertGetId(
+                                    array(
+                                         'schedule_id'           => $input['schedule_id'],
+                                         'status'                => $input['status'],
+                                         'assigned_associate_id' => $input['assigned_associate_id']
+                                        )
+                                    );
+
+            $result = Service::find($insertedId);
             return response()->json($result);
         } catch (\Exception $error) {
             dd($error);
