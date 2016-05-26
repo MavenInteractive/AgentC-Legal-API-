@@ -14,18 +14,18 @@ class StartUpController extends Controller
 {
     public function index(){
         try {
-            $courts = Court::select('name')->get();
-            $associates = Associate::select('fullname')->get();
-            $requests = RequestType::select('name')->get();
+            $courts = Court::get();
+            $associates = Associate::get();
+            $requests = RequestType::get();
 
             foreach ($courts as $court) {
-                $courtNames[] = $court->name;
+                $courtNames[] = $court;
             }
             foreach ($associates as $associate) {
-                $associateNames[] = $associate->fullname;
+                $associateNames[] = $associate;
             }
             foreach ($requests as $request) {
-                $requestNames[] = $request->name;
+                $requestNames[] = $request;
             }
 
             $result['courts'] = $courtNames;
@@ -33,7 +33,6 @@ class StartUpController extends Controller
             $result['request_types'] = $requestNames;
 			return response()->json($result);
 		} catch (\Exception $error) {
-            dd($error);
 			return response()->json(['error' => 'bad_request'], Response::HTTP_BAD_REQUEST);
 		}
     }
