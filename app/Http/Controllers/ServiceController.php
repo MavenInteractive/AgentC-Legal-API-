@@ -86,16 +86,86 @@ class ServiceController extends Controller
 
     public function action(){
         try {
-            $input = \Request::only('schedule_id','status','assigned_associate_id');
-            $insertedId = Service::insertGetId(
+            $input = \Request::only('associate_id','court_detail_id','date_time','request_type_id','notes','assignees');
+            $insertedId = Schedule::insertGetId(
                                     array(
-                                         'schedule_id'           => $input['schedule_id'],
-                                         'status'                => $input['status'],
-                                         'assigned_associate_id' => $input['assigned_associate_id']
+                                         'associate_id'    => $input['associate_id'],
+                                         'court_detail_id' => $input['court_detail_id'],
+                                         'date_time'       => $input['date_time'],
+                                         'request_type_id' => $input['request_type_id'],
+                                         'notes'           => $input['notes']
                                         )
                                     );
+            $serviceId = Service::insertGetId(
+                            array(
+                                'schedule_id' => $insertedId,
+                                'status' => 0,
+                                'assigned_associate_id' => 0
+                            )
+                        );
 
-            $result = Service::find($insertedId);
+            $assigneesId = ServiceAssignees::insertGetId(
+                array(
+                    'service_request_id' => $serviceId,
+                    'associate_id'       => $input['assignees']
+                )
+            );
+
+            $service = Service::where('id',$serviceId)->first();
+
+            $schedule = Schedule::where('id', $insertedId)->get();
+            $courtDetails = CourtDetails::where('id', $schedule['0']->court_detail_id)->get();
+            $court = Court::where('id', $courtDetails['0']->court_id)->get();
+            $requestType = RequestType::where('id', $schedule['0']->request_type_id)->get();
+
+            $assignees = ServiceAssignees::where('service_request_id', $serviceId)->get();
+            $assigneeIds = array();
+            if(count($assignees)){
+                foreach ($assignees as $assignee) {
+                    $assigneeIds[] = $assignee->associate_id;
+                }
+            }
+
+            $associate = Associate::where('id', $schedule['0']->associate_id)->get();
+
+            /* service request */
+            $result['id'] = $service->id;
+            $result['schedule_id'] = $service->schedule_id;
+            $result['status'] = $service->status;
+            $result['assigned_associate_id'] = $service->assigned_associate_id;
+            $result['insert_time'] = $service->insert_time;
+            $result['update_time'] = $service->update_time;
+
+            /* schedules */
+            $result['court_detail_id'] = $schedule['0']->court_detail_id;
+            $result['associate_id'] = $schedule['0']->associate_id;
+            $result['date_time'] = $schedule['0']->date_time;
+            $result['request_type_id'] = $schedule['0']->request_type_id;
+            $result['notes'] = $schedule['0']->notes;
+
+            /* court details */
+            $result['type'] = $courtDetails['0']->type;
+            $result['level'] = $courtDetails['0']->level;
+            $result['court_id'] = $courtDetails['0']->court_id;
+
+            /* court */
+            $result['name'] = $court['0']->name;
+            $result['latitude'] = $court['0']->latitude;
+            $result['longitude'] = $court['0']->longitude;
+            $result['address'] = $court['0']->address;
+
+            /* request type */
+            $result['request_type'] = $requestType['0']->name;
+            $result['request_description'] = $requestType['0']->description;
+
+            /* service request assignees */
+            $result['assignees'] = $assigneeIds;
+
+            /* associates */
+            $result['fullname'] = $associate['0']->fullname;
+            $result['photo'] = $associate['0']->photo;
+            $result['law_firm'] = $associate['0']->law_firm;
+
             return response()->json($result);
         } catch (\Exception $error) {
             dd($error);
