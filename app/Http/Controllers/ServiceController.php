@@ -84,7 +84,7 @@ class ServiceController extends Controller
 		}
     }
 
-    public function action(){
+    public function add(){
         try {
             $input = \Request::only('associate_id','court_detail_id','date_time','request_type_id','notes','assignees');
             $insertedId = Schedule::insertGetId(
