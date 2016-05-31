@@ -70,9 +70,10 @@ Route::group(['prefix' => 'api/v1.0'], function() {
 
     Route::post('forgot',            ['as' => 'forgot',                    'uses' => 'AssociateController@forgot']);
 
+    Route::post('service-request',   ['as' => 'service-request.add',       'uses' => 'ServiceController@add']);
     Route::get('service-request',    ['as' => 'service-request.index',     'uses' => 'ServiceController@index']);
-    Route::post('service-requests',   ['as' => 'service-requests.add',       'uses' => 'ServiceController@add']);
+
     Route::put('service-request',    ['as' => 'service-request',           'uses' => 'ServiceController@status']);
-    Route::delete('service-request', ['as' => 'service-request.delete',     'uses' => 'ServiceController@delete']);
+    Route::delete('service-request', ['as' => 'service-request.delete',    'uses' => 'ServiceController@delete']);
 
 });
