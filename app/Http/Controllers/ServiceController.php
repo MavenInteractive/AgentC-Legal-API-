@@ -87,6 +87,7 @@ class ServiceController extends Controller
     public function add(){
         try {
             $input = \Request::only('associate_id','court_detail_id','date_time','request_type_id','notes','assignees');
+
             $insertedId = Schedule::insertGetId(
                                     array(
                                          'associate_id'    => $input['associate_id'],
@@ -103,13 +104,17 @@ class ServiceController extends Controller
                                 'assigned_associate_id' => 0
                             )
                         );
+            $assigneesNumbers = explode( ',', $input['assignees']);
 
-            $assigneesId = ServiceAssignees::insertGetId(
-                array(
-                    'service_request_id' => $serviceId,
-                    'associate_id'       => $input['assignees']
-                )
-            );
+            foreach ($assigneesNumbers as $a) {
+                $assigneesId = ServiceAssignees::insertGetId(
+                    array(
+                        'service_request_id' => $serviceId,
+                        'associate_id'       => $a
+                    )
+                );
+            }
+
 
             $service = Service::where('id',$serviceId)->first();
 
@@ -168,7 +173,6 @@ class ServiceController extends Controller
 
             return response()->json($result);
         } catch (\Exception $error) {
-            dd($error);
             return response()->json(['error' => 'bad_request'], Response::HTTP_BAD_REQUEST);
         }
     }
