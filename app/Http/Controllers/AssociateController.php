@@ -177,17 +177,20 @@ class AssociateController extends Controller
             foreach ($associates as $associate) {
                 $latitude = 0;
                 $longitude = 0;
-                
+                $distance = 0;
+
                 $location = AssociateLocation::where('associate_id',$associate['id'])->orderBy('date_time','desc')->first();
 
                 if($location == NULL){
                     $latitude = 0;
                     $longitude = 0;
+                    $distance = 0;
                 } else{
 
                     $court = Court::where('id',$location['court_id'])->first();
                     $latitude = $court['latitude'];
                     $longitude = $court['longitude'];
+                    $distance = $location['distance'];
 
                 }
 
@@ -210,7 +213,8 @@ class AssociateController extends Controller
                     "updated_at" => $associate["updated_at"],
                     "insert_time" => $associate["insert_time"],
                     "latitude" => $latitude,
-                    "longitude" => $longitude
+                    "longitude" => $longitude,
+                    "distance" => $distance
                 );
 
             }
