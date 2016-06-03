@@ -178,6 +178,7 @@ class AssociateController extends Controller
                 $latitude = 0;
                 $longitude = 0;
                 $distance = 0;
+                $court_id = 0;
 
                 $location = AssociateLocation::where('associate_id',$associate['id'])->orderBy('date_time','desc')->first();
 
@@ -185,12 +186,15 @@ class AssociateController extends Controller
                     $latitude = 0;
                     $longitude = 0;
                     $distance = 0;
+                    $court_id = 0;
+
                 } else{
 
                     $court = Court::where('id',$location['court_id'])->first();
                     $latitude = $court['latitude'];
                     $longitude = $court['longitude'];
                     $distance = $location['distance'];
+                    $court_id = $location['court_id'];
 
                 }
 
@@ -214,7 +218,8 @@ class AssociateController extends Controller
                     "insert_time" => $associate["insert_time"],
                     "latitude" => $latitude,
                     "longitude" => $longitude,
-                    "distance" => $distance
+                    "distance" => $distance,
+                    "court_id" => $court_id
                 );
 
             }
