@@ -31,7 +31,7 @@ class AssociateController extends Controller
                 return response()->json($result);
             }
             else{
-                $result = 0;
+                $result = array('0');
                 return response()->json($result);
             }
 
