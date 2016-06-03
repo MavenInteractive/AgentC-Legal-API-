@@ -7,25 +7,37 @@ use Illuminate\Http\Response;
 use App\Http\Requests;
 use App\Associate;
 use App\Favorite;
-
+use App\Court;
+use App\AssociateLocation;
 
 class AssociateController extends Controller
 {
     public function index(){
+
         try {
             $input = \Request::only('id','full');
-			$result = Associate::findOrFail($input['id']);
-            if($input['full'] == 1){
+            $result = Associate::where('id', $input['id'])->get();
+            if($input['full'] == 1 && count($result) > 0){
                 $favorites = Favorite::select('id')->where('associate_id',$input['id'])->get();
-
-                foreach ($favorites as $favorite) {
-                    $favoriteIds[] = $favorite->id;
+                if(count($favorites) > 0){
+                    foreach ($favorites as $favorite) {
+                        $favoriteIds[] = $favorite->id;
+                    }
+                    $result['favorites'] = $favoriteIds;
                 }
-                $result['favorites'] = $favoriteIds;
             }
 
-			return response()->json($result);
+            if(count($result) > 0){
+                return response()->json($result);
+            }
+            else{
+                $result = 0;
+                return response()->json($result);
+            }
+
+
 		} catch (\Exception $error) {
+            dd($error);
 			return response()->json(['error' => 'bad_request'], Response::HTTP_BAD_REQUEST);
 		}
     }
@@ -158,9 +170,54 @@ class AssociateController extends Controller
 
     public function showAll(){
         try{
-            $result = Associate::all()->sortBy('fullname');
+            $associates = Associate::all()->sortBy('fullname');
+
+
+
+            foreach ($associates as $associate) {
+                $latitude = 0;
+                $longitude = 0;
+                
+                $location = AssociateLocation::where('associate_id',$associate['id'])->orderBy('date_time','desc')->first();
+
+                if($location == NULL){
+                    $latitude = 0;
+                    $longitude = 0;
+                } else{
+
+                    $court = Court::where('id',$location['court_id'])->first();
+                    $latitude = $court['latitude'];
+                    $longitude = $court['longitude'];
+
+                }
+
+                $result[] = array(
+                    "id" => $associate["id"],
+                    "username" => $associate["username"],
+                    "password" => $associate["password"],
+                    "fullname" => $associate["fullname"],
+                    "email" => $associate["email"],
+                    "phone" => $associate["phone"],
+                    "photo" => $associate["photo"],
+                    "law_firm" => $associate["law_firm"],
+                    "position" => $associate["position"],
+                    "city" => $associate["city"],
+                    "law_society_ref_number" => $associate["law_society_ref_number"],
+                    "association_number" => $associate["association_number"],
+                    "is_private" => $associate["is_private"],
+                    "status" => $associate["status"],
+                    "alert_settings" => $associate["alert_settings"],
+                    "updated_at" => $associate["updated_at"],
+                    "insert_time" => $associate["insert_time"],
+                    "latitude" => $latitude,
+                    "longitude" => $longitude
+                );
+
+            }
+
             return response()->json($result);
         } catch (\Exception $error) {
+            dd($error);
             return response()->json(['error' => 'bad_request'], Response::HTTP_BAD_REQUEST);
         }
     }
