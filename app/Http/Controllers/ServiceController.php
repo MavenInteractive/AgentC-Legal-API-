@@ -135,10 +135,7 @@ class ServiceController extends Controller
                                  ->leftJoin('courts', 'courts.id', '=','court_details.court_id')
                                  ->leftJoin('request_types','request_types.id', '=','schedules.request_type_id')
                                  ->leftJoin('associates','associates.id', '=','schedules.associate_id')
-                                 ->where('schedules.associate_id', $input['associate_id'])
-                                 ->where('service_requests.status', $input['status'])
-                                 ->skip($input['offset'])
-                                 ->take($input['limit'])
+                                 ->where('schedules.id',$insertedId)
                                  ->select('service_requests.*', 'schedules.court_detail_id', 'schedules.associate_id', 'schedules.date_time', 'schedules.request_type_id', 'schedules.notes', 'court_details.type', 'court_details.level', 'court_details.court_id', 'courts.name', 'courts.latitude', 'courts.longitude', 'courts.address','request_types.name AS request_type', 'request_types.description AS request_description', 'associates.fullname', 'associates.photo', 'associates.law_firm')
                                  ->get();
 
@@ -201,6 +198,7 @@ class ServiceController extends Controller
 
 			return response()->json($result);
         } catch (\Exception $error) {
+            dd($error);
             return response()->json(['error' => 'bad_request'], Response::HTTP_BAD_REQUEST);
         }
     }
