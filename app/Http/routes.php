@@ -76,4 +76,6 @@ Route::group(['prefix' => 'api/v1.0'], function() {
     Route::put('service-request',    ['as' => 'service-request',           'uses' => 'ServiceController@status']);
     Route::delete('service-request', ['as' => 'service-request.delete',    'uses' => 'ServiceController@delete']);
 
+    Route::get('ping',               ['as' => 'ping',                      'uses' => 'PingController@index']);
+
 });
