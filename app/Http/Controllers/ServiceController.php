@@ -20,65 +20,72 @@ class ServiceController extends Controller
     public function index(){
         try {
             $input = \Request::only('as_assignor', 'associate_id', 'status', 'offset', 'limit');
-			$service = Service::where('assigned_associate_id', $input['associate_id'])
-                              ->where('status', $input['status'])
-                              ->skip($input['offset'])
-                              ->take($input['limit'])
-                              ->get();
-                              
-            if(count($service) > 0){
-                $schedule = Schedule::where('id', $service['0']->schedule_id)->get();
-                $courtDetails = CourtDetails::where('id', $schedule['0']->court_detail_id)->get();
-                $court = Court::where('id', $courtDetails['0']->court_id)->get();
-                $requestType = RequestType::where('id', $schedule['0']->request_type_id)->get();
 
-                $assignees = ServiceAssignees::where('service_request_id', $service['0']->id)->get();
-                $assigneeIds = array();
-                if(count($assignees)){
-                    foreach ($assignees as $assignee) {
-                        $assigneeIds[] = $assignee->associate_id;
+            $service_requests =  DB::table('service_requests')
+                                 ->leftJoin('schedules', 'service_requests.schedule_id', '=', 'schedules.id')
+                                 ->leftJoin('court_details', 'court_details.id', '=', 'schedules.court_detail_id')
+                                 ->leftJoin('courts', 'courts.id', '=','court_details.court_id')
+                                 ->leftJoin('request_types','request_types.id', '=','schedules.request_type_id')
+                                 ->leftJoin('associates','associates.id', '=','schedules.associate_id')
+                                 ->where('schedules.associate_id', $input['associate_id'])
+                                 ->where('service_requests.status', $input['status'])
+                                 ->skip($input['offset'])
+                                 ->take($input['limit'])
+                                 ->select('service_requests.*', 'schedules.court_detail_id', 'schedules.associate_id', 'schedules.date_time', 'schedules.request_type_id', 'schedules.notes', 'court_details.type', 'court_details.level', 'court_details.court_id', 'courts.name', 'courts.latitude', 'courts.longitude', 'courts.address','request_types.name AS request_type', 'request_types.description AS request_description', 'associates.fullname', 'associates.photo', 'associates.law_firm')
+                                 ->get();
+
+
+            if(count($service_requests) > 0){
+                $result = array();
+                foreach ($service_requests as $request) {
+                    $assignees = ServiceAssignees::where('service_request_id', $request->id)->get();
+                    $assigneeIds = array();
+                    if(count($assignees)){
+                        foreach ($assignees as $assignee) {
+                            $assigneeIds[] = $assignee->associate_id;
+                        }
                     }
+
+                    /* service request */
+                    $sr['id'] = $request->id;
+                    $sr['schedule_id'] = $request->schedule_id;
+                    $sr['status'] = $request->status;
+                    $sr['assigned_associate_id'] = $request->assigned_associate_id;
+                    $sr['insert_time'] = $request->insert_time;
+                    $sr['update_time'] = $request->update_time;
+
+                    /* schedules */
+                    $sr['court_detail_id'] = $request->court_detail_id;
+                    $sr['associate_id'] = $request->associate_id;
+                    $sr['date_time'] = $request->date_time;
+                    $sr['request_type_id'] = $request->request_type_id;
+                    $sr['notes'] = $request->notes;
+
+                    /* court details */
+                    $sr['type'] = $request->type;
+                    $sr['level'] = $request->level;
+                    $sr['court_id'] = $request->court_id;
+
+                    /* court */
+                    $sr['name'] = $request->name;
+                    $sr['latitude'] = $request->latitude;
+                    $sr['longitude'] = $request->longitude;
+                    $sr['address'] = $request->address;
+
+                    /* request type */
+                    $sr['request_type'] = $request->request_type;
+                    $sr['request_description'] = $request->request_description;
+
+                    /* service request assignees */
+                    $sr['assignees'] = $assigneeIds;
+
+                    /* associates */
+                    $sr['fullname'] = $request->fullname;
+                    $sr['photo'] = $request->photo;
+                    $sr['law_firm'] = $request->law_firm;
+
+                    $result[]= $sr;
                 }
-
-                $associate = Associate::where('id', $schedule['0']->associate_id)->get();
-
-                /* service request */
-                $result['id'] = $service['0']->id;
-                $result['schedule_id'] = $service['0']->schedule_id;
-                $result['status'] = $service['0']->status;
-                $result['assigned_associate_id'] = $service['0']->assigned_associate_id;
-                $result['insert_time'] = $service['0']->insert_time;
-                $result['update_time'] = $service['0']->update_time;
-
-                /* schedules */
-                $result['court_detail_id'] = $schedule['0']->court_detail_id;
-                $result['associate_id'] = $schedule['0']->associate_id;
-                $result['date_time'] = $schedule['0']->date_time;
-                $result['request_type_id'] = $schedule['0']->request_type_id;
-                $result['notes'] = $schedule['0']->notes;
-
-                /* court details */
-                $result['type'] = $courtDetails['0']->type;
-                $result['level'] = $courtDetails['0']->level;
-                $result['court_id'] = $courtDetails['0']->court_id;
-
-                /* court */
-                $result['name'] = $court['0']->name;
-                $result['latitude'] = $court['0']->latitude;
-                $result['longitude'] = $court['0']->longitude;
-                $result['address'] = $court['0']->address;
-
-                /* request type */
-                $result['request_type'] = $requestType['0']->name;
-                $result['request_description'] = $requestType['0']->description;
-
-                /* service request assignees */
-                $result['assignees'] = $assigneeIds;
-
-                /* associates */
-                $result['fullname'] = $associate['0']->fullname;
-                $result['photo'] = $associate['0']->photo;
-                $result['law_firm'] = $associate['0']->law_firm;
             }
             else{
                 $result = array('0');
@@ -122,62 +129,77 @@ class ServiceController extends Controller
             }
 
 
-            $service = Service::where('id',$serviceId)->first();
+            $service_requests =  DB::table('service_requests')
+                                 ->leftJoin('schedules', 'service_requests.schedule_id', '=', 'schedules.id')
+                                 ->leftJoin('court_details', 'court_details.id', '=', 'schedules.court_detail_id')
+                                 ->leftJoin('courts', 'courts.id', '=','court_details.court_id')
+                                 ->leftJoin('request_types','request_types.id', '=','schedules.request_type_id')
+                                 ->leftJoin('associates','associates.id', '=','schedules.associate_id')
+                                 ->where('schedules.associate_id', $input['associate_id'])
+                                 ->where('service_requests.status', $input['status'])
+                                 ->skip($input['offset'])
+                                 ->take($input['limit'])
+                                 ->select('service_requests.*', 'schedules.court_detail_id', 'schedules.associate_id', 'schedules.date_time', 'schedules.request_type_id', 'schedules.notes', 'court_details.type', 'court_details.level', 'court_details.court_id', 'courts.name', 'courts.latitude', 'courts.longitude', 'courts.address','request_types.name AS request_type', 'request_types.description AS request_description', 'associates.fullname', 'associates.photo', 'associates.law_firm')
+                                 ->get();
 
-            $schedule = Schedule::where('id', $insertedId)->get();
-            $courtDetails = CourtDetails::where('id', $schedule['0']->court_detail_id)->get();
-            $court = Court::where('id', $courtDetails['0']->court_id)->get();
-            $requestType = RequestType::where('id', $schedule['0']->request_type_id)->get();
 
-            $assignees = ServiceAssignees::where('service_request_id', $serviceId)->get();
-            $assigneeIds = array();
-            if(count($assignees)){
-                foreach ($assignees as $assignee) {
-                    $assigneeIds[] = $assignee->associate_id;
+            if(count($service_requests) > 0){
+                $result = array();
+                foreach ($service_requests as $request) {
+                    $assignees = ServiceAssignees::where('service_request_id', $request->id)->get();
+                    $assigneeIds = array();
+                    if(count($assignees)){
+                        foreach ($assignees as $assignee) {
+                            $assigneeIds[] = $assignee->associate_id;
+                        }
+                    }
+
+                    /* service request */
+                    $sr['id'] = $request->id;
+                    $sr['schedule_id'] = $request->schedule_id;
+                    $sr['status'] = $request->status;
+                    $sr['assigned_associate_id'] = $request->assigned_associate_id;
+                    $sr['insert_time'] = $request->insert_time;
+                    $sr['update_time'] = $request->update_time;
+
+                    /* schedules */
+                    $sr['court_detail_id'] = $request->court_detail_id;
+                    $sr['associate_id'] = $request->associate_id;
+                    $sr['date_time'] = $request->date_time;
+                    $sr['request_type_id'] = $request->request_type_id;
+                    $sr['notes'] = $request->notes;
+
+                    /* court details */
+                    $sr['type'] = $request->type;
+                    $sr['level'] = $request->level;
+                    $sr['court_id'] = $request->court_id;
+
+                    /* court */
+                    $sr['name'] = $request->name;
+                    $sr['latitude'] = $request->latitude;
+                    $sr['longitude'] = $request->longitude;
+                    $sr['address'] = $request->address;
+
+                    /* request type */
+                    $sr['request_type'] = $request->request_type;
+                    $sr['request_description'] = $request->request_description;
+
+                    /* service request assignees */
+                    $sr['assignees'] = $assigneeIds;
+
+                    /* associates */
+                    $sr['fullname'] = $request->fullname;
+                    $sr['photo'] = $request->photo;
+                    $sr['law_firm'] = $request->law_firm;
+
+                    $result[]= $sr;
                 }
             }
+            else{
+                $result = array('0');
+            }
 
-            $associate = Associate::where('id', $schedule['0']->associate_id)->get();
-
-            /* service request */
-            $result['id'] = $service->id;
-            $result['schedule_id'] = $service->schedule_id;
-            $result['status'] = $service->status;
-            $result['assigned_associate_id'] = $service->assigned_associate_id;
-            $result['insert_time'] = $service->insert_time;
-            $result['update_time'] = $service->update_time;
-
-            /* schedules */
-            $result['court_detail_id'] = $schedule['0']->court_detail_id;
-            $result['associate_id'] = $schedule['0']->associate_id;
-            $result['date_time'] = $schedule['0']->date_time;
-            $result['request_type_id'] = $schedule['0']->request_type_id;
-            $result['notes'] = $schedule['0']->notes;
-
-            /* court details */
-            $result['type'] = $courtDetails['0']->type;
-            $result['level'] = $courtDetails['0']->level;
-            $result['court_id'] = $courtDetails['0']->court_id;
-
-            /* court */
-            $result['name'] = $court['0']->name;
-            $result['latitude'] = $court['0']->latitude;
-            $result['longitude'] = $court['0']->longitude;
-            $result['address'] = $court['0']->address;
-
-            /* request type */
-            $result['request_type'] = $requestType['0']->name;
-            $result['request_description'] = $requestType['0']->description;
-
-            /* service request assignees */
-            $result['assignees'] = $assigneeIds;
-
-            /* associates */
-            $result['fullname'] = $associate['0']->fullname;
-            $result['photo'] = $associate['0']->photo;
-            $result['law_firm'] = $associate['0']->law_firm;
-
-            return response()->json($result);
+			return response()->json($result);
         } catch (\Exception $error) {
             return response()->json(['error' => 'bad_request'], Response::HTTP_BAD_REQUEST);
         }
