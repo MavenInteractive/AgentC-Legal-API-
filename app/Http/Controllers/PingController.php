@@ -89,7 +89,9 @@ class PingController extends Controller
                         //      $query->where('service_requests.assigned_associate_id',$associateId)
                         //      ->orWhere('schedules.associate_id',$associateId)
                         //  })
-                        ->where('service_requests.update_time','>=',  $requestsTimestamp)->get();
+                        ->select('service_requests.*')
+                        ->where('service_requests.insert_time','>=',  $requestsTimestamp)
+                        ->get();
 
         $newNotifications = Notification::where('associate_id',$associateId)->where('insert_time','>=', $notificationsTimestamp)->get();
 
