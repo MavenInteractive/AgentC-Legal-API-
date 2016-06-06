@@ -100,7 +100,7 @@ class PingController extends Controller
                                   $query->where('sender_associate_id',$associateId)
                                   ->orWhere('receiver_associate_id',$associateId);
                               })
-                              ->where('update_time','>=', $messagesTimestamp)
+                              ->where('insert_time','>=', $messagesTimestamp)
                               ->get();
 
         return array('new_requests' => $newRequests,
