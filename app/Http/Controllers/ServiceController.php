@@ -25,6 +25,7 @@ class ServiceController extends Controller
                               ->skip($input['offset'])
                               ->take($input['limit'])
                               ->get();
+                              
             if(count($service) > 0){
                 $schedule = Schedule::where('id', $service['0']->schedule_id)->get();
                 $courtDetails = CourtDetails::where('id', $schedule['0']->court_detail_id)->get();
@@ -82,7 +83,7 @@ class ServiceController extends Controller
             else{
                 $result = array('0');
             }
-            
+
 			return response()->json($result);
 		} catch (\Exception $error) {
 			return response()->json(['error' => 'bad_request'], Response::HTTP_BAD_REQUEST);

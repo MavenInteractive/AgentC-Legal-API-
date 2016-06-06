@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 use App\Http\Requests;
 use App\AssociateLocation;
@@ -32,6 +33,7 @@ class PingController extends Controller
             return response()->json($result);
 
 		} catch (\Exception $error) {
+            dd($error);
 			return response()->json(['error' => 'bad_request'], Response::HTTP_BAD_REQUEST);
 		}
     }
@@ -82,17 +84,21 @@ class PingController extends Controller
         $newRequests = DB::table('service_requests')
                         ->leftJoin('schedules', 'service_requests.schedule_id', '=', 'schedules.id')
                         ->leftJoin('service_request_assignees', 'service_requests.id', '=', 'service_request_assignees.service_request_id')
-                        ->where('service_requests.assigned_associate_id',$associateId)
-                        ->orWhere('schedules.associate_id',$associateId)
-                        ->orWhere('service_request_assignees.associate_id',$associateId)
-                        ->where('service_requests.update_time','>',  $requestsTimestamp)->get();
+                        ->where(function($query) use ($associateId){
+                             $query->where('service_requests.assigned_associate_id',$associateId)
+                             ->orWhere('schedules.associate_id',$associateId)
+                             ->orWhere('service_request_assignees.associate_id',$associateId);
+                         })
+                        ->where('service_requests.update_time','>=',  $requestsTimestamp)->get();
 
-        $newNotifications = Notification::where('associate_id',$associateId)->where('insert_time','>', $notificationsTimestamp)->get();
+        $newNotifications = Notification::where('associate_id',$associateId)->where('insert_time','>=', $notificationsTimestamp)->get();
 
 
-        $newMessages = Inbox::where('sender_associate_id',$associateId)
-                              ->orWhere('receiver_associate_id',$associateId)
-                              ->where('update_time','>', $messagesTimestamp)
+        $newMessages = Inbox::where(function($query) use ($associateId){
+                                  $query->where('sender_associate_id',$associateId)
+                                  ->orWhere('receiver_associate_id',$associateId);
+                              })
+                              ->where('update_time','>=', $messagesTimestamp)
                               ->get();
 
         return array('new_requests' => $newRequests,

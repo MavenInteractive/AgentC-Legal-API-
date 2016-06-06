@@ -15,6 +15,7 @@ class InboxController extends Controller
         try {
             $input = \Request::only('associate_id');
 			$result = Inbox::where('receiver_associate_id', $input['associate_id'])
+                             ->orWhere('sender_associate_id', $input['associate_id'])
                                   ->get();
 			return response()->json($result);
 		} catch (\Exception $error) {
