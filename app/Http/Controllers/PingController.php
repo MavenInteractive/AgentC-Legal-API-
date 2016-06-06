@@ -83,12 +83,12 @@ class PingController extends Controller
 
         $newRequests = DB::table('service_requests')
                         ->leftJoin('schedules', 'service_requests.schedule_id', '=', 'schedules.id')
-                        // ->leftJoin('service_request_assignees', 'service_requests.id', '=', 'service_request_assignees.service_request_id')
-                        ->where(function($query) use ($associateId){
-                             $query->where('service_requests.assigned_associate_id',$associateId)
-                             ->orWhere('schedules.associate_id',$associateId)
-                             ->orWhere('service_request_assignees.associate_id',$associateId);
-                         })
+                        ->where('schedules.associate_id',$associateId)
+                        //->leftJoin('service_request_assignees', 'service_requests.id', '=', 'service_request_assignees.service_request_id')
+                        // ->where(function($query) use ($associateId){
+                        //      $query->where('service_requests.assigned_associate_id',$associateId)
+                        //      ->orWhere('schedules.associate_id',$associateId)
+                        //  })
                         ->where('service_requests.update_time','>=',  $requestsTimestamp)->get();
 
         $newNotifications = Notification::where('associate_id',$associateId)->where('insert_time','>=', $notificationsTimestamp)->get();
