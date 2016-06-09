@@ -17,7 +17,7 @@ class ScheduleController extends Controller
     public function index(){
         try {
             $input = \Request::only('associate_id', 'court_detail_id', 'from_date', 'to_date');
-            if($input == 0){
+            if($input['court_detail_id'] == 0){
                 $result = Schedule::where('associate_id', $input['associate_id'])
                                   ->whereBetween('date_time', array($input['from_date'],$input['to_date']))
                                   ->get();
