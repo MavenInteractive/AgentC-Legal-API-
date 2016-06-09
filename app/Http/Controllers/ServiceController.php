@@ -42,7 +42,8 @@ class ServiceController extends Controller
                     $assigneeIds = array();
                     if(count($assignees)){
                         foreach ($assignees as $assignee) {
-                            $assigneeIds[] = $assignee->associate_id;
+                            $associateData = Associate::where('id', $assignee->associate_id)->first();
+                            $assigneeIds[] = array('id' => $assignee->associate_id, 'fullname' => $associateData->fullname);
                         }
                     }
 
@@ -93,6 +94,7 @@ class ServiceController extends Controller
 
 			return response()->json($result);
 		} catch (\Exception $error) {
+            dd($error);
 			return response()->json(['error' => 'bad_request'], Response::HTTP_BAD_REQUEST);
 		}
     }
