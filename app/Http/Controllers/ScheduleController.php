@@ -21,24 +21,9 @@ class ScheduleController extends Controller
                 $result = Schedule::where('associate_id', $input['associate_id'])
                                   ->whereBetween('date_time', array($input['from_date'],$input['to_date']))
                                   ->get();
-            } else {
-                $result = Schedule::where('associate_id', $input['associate_id'])
-                                  ->where('court_detail_id', $input['court_detail_id'])
-                                  ->whereBetween('date_time', array($input['from_date'],$input['to_date']))
-                                  ->get();
-            }
-            if($input['associate_id'] == 0){
+            } elseif($input['associate_id'] == 0){
                 $result = Schedule::where('court_detail_id', $input['court_detail_id'])
                                   ->whereBetween('date_time', array($input['from_date'],$input['to_date']))
-                                  ->get();
-            } else {
-                $result = Schedule::where('associate_id', $input['associate_id'])
-                                  ->where('court_detail_id', $input['court_detail_id'])
-                                  ->whereBetween('date_time', array($input['from_date'],$input['to_date']))
-                                  ->get();
-            }
-            if($input['associate_id'] == 0 && $input['court_detail_id'] == 0){
-                $result = Schedule::whereBetween('date_time', array($input['from_date'],$input['to_date']))
                                   ->get();
             } else {
                 $result = Schedule::where('associate_id', $input['associate_id'])
