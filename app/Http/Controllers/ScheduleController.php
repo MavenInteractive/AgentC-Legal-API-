@@ -19,16 +19,28 @@ class ScheduleController extends Controller
             $input = \Request::only('associate_id', 'court_detail_id', 'from_date', 'to_date');
             if($input['court_detail_id'] == 0){
                 $result = Schedule::where('associate_id', $input['associate_id'])
-                                  ->whereBetween('date_time', array($input['from_date'],$input['to_date']))
+                                  ->leftJoin('court_details','schedules.court_detail_id','=','court_details.id')
+                                  ->leftJoin('courts','court_details.court_id','=','courts.id')
+                                  ->leftJoin('request_types','schedules.request_type_id','=','request_types.id')
+                                  ->whereBetween('schedules.date_time', array($input['from_date'],$input['to_date']))
+                                  ->select('schedules.*', 'courts.name AS court_name', 'request_types.name AS request_type')
                                   ->get();
             } elseif($input['associate_id'] == 0){
                 $result = Schedule::where('court_detail_id', $input['court_detail_id'])
+                                  ->leftJoin('court_details','schedules.court_detail_id','=','court_details.id')
+                                  ->leftJoin('courts','court_details.court_id','=','courts.id')
+                                  ->leftJoin('request_types','schedules.request_type_id','=','request_types.id')
                                   ->whereBetween('date_time', array($input['from_date'],$input['to_date']))
+                                   ->select('schedules.*', 'courts.name AS court_name', 'request_types.name AS request_type')
                                   ->get();
             } else {
                 $result = Schedule::where('associate_id', $input['associate_id'])
                                   ->where('court_detail_id', $input['court_detail_id'])
+                                  ->leftJoin('court_details','schedules.court_detail_id','=','court_details.id')
+                                  ->leftJoin('courts','court_details.court_id','=','courts.id')
+                                  ->leftJoin('request_types','schedules.request_type_id','=','request_types.id')
                                   ->whereBetween('date_time', array($input['from_date'],$input['to_date']))
+                                   ->select('schedules.*', 'courts.name AS court_name', 'request_types.name AS request_type')
                                   ->get();
             }
 
