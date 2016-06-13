@@ -14,6 +14,8 @@ class CourtController extends Controller
         try {
             $input = \Request::only('type','level');
 			$result = Court::leftJoin('court_details', 'court_details.court_id', '=', 'courts.id')
+                           ->where('court_details.type',$input['type'])
+                           ->where('court_details.level',$input['level'])
                            ->select('courts.*','court_details.id AS detail_id','court_details.type','court_details.level')
                            ->get();
 			return response()->json($result);
