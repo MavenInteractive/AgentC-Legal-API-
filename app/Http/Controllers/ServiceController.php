@@ -39,11 +39,15 @@ class ServiceController extends Controller
                 $result = array();
                 foreach ($service_requests as $request) {
                     $assignees = ServiceAssignees::where('service_request_id', $request->id)->get();
+
                     $assigneeIds = array();
                     if(count($assignees)){
                         foreach ($assignees as $assignee) {
                             $associateData = Associate::where('id', $assignee->associate_id)->first();
-                            $assigneeIds[] = array('id' => $assignee->associate_id, 'fullname' => $associateData->fullname);
+                            if(count($associateData)){
+                                $assigneeIds[] = array('id' => $assignee->associate_id, 'fullname' => $associateData->fullname);
+                            }
+
                         }
                     }
 
