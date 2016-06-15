@@ -236,4 +236,14 @@ class AssociateController extends Controller
             return response()->json(['error' => 'bad_request'], Response::HTTP_BAD_REQUEST);
         }
     }
+
+    public function sendForgotPasswordEmail($id){
+            $user = User::find($id);
+
+        Mail::send('emails.forgot_password', array('nick' => $user->nick), function($message){
+            $message->to($user->email, $user->nick)->subject('Forgot Password');
+        });
+
+        return Redirect::to('/');
+    }
 }

@@ -21,80 +21,147 @@ class ServiceController extends Controller
         try {
             $input = \Request::only('as_assignor', 'associate_id', 'status', 'offset', 'limit');
 
-            $service_requests =  DB::table('service_requests')
-                                 ->leftJoin('schedules', 'service_requests.schedule_id', '=', 'schedules.id')
-                                 ->leftJoin('court_details', 'court_details.id', '=', 'schedules.court_detail_id')
-                                 ->leftJoin('courts', 'courts.id', '=','court_details.court_id')
-                                 ->leftJoin('request_types','request_types.id', '=','schedules.request_type_id')
-                                 ->leftJoin('associates','associates.id', '=','schedules.associate_id')
-                                 ->where('schedules.associate_id', $input['associate_id'])
-                                 ->where('service_requests.status', $input['status'])
-                                 ->skip($input['offset'])
-                                 ->take($input['limit'])
-                                 ->select('service_requests.*', 'schedules.court_detail_id', 'schedules.associate_id', 'schedules.date_time', 'schedules.request_type_id', 'schedules.notes', 'court_details.type', 'court_details.level', 'court_details.court_id', 'courts.name', 'courts.latitude', 'courts.longitude', 'courts.address','request_types.name AS request_type', 'request_types.description AS request_description', 'associates.fullname', 'associates.photo', 'associates.law_firm')
-                                 ->get();
+            if($input['as_assignor'] == 1){
+
+                $service_requests =  DB::table('service_requests')
+                                     ->leftJoin('schedules', 'service_requests.schedule_id', '=', 'schedules.id')
+                                     ->leftJoin('court_details', 'court_details.id', '=', 'schedules.court_detail_id')
+                                     ->leftJoin('courts', 'courts.id', '=','court_details.court_id')
+                                     ->leftJoin('request_types','request_types.id', '=','schedules.request_type_id')
+                                     ->leftJoin('associates','associates.id', '=','schedules.associate_id')
+                                     ->where('schedules.associate_id', $input['associate_id'])
+                                     ->where('service_requests.status', $input['status'])
+                                     ->skip($input['offset'])
+                                     ->take($input['limit'])
+                                     ->select('service_requests.*', 'schedules.court_detail_id', 'schedules.associate_id', 'schedules.date_time', 'schedules.request_type_id', 'schedules.notes', 'court_details.type', 'court_details.level', 'court_details.court_id', 'courts.name', 'courts.latitude', 'courts.longitude', 'courts.address','request_types.name AS request_type', 'request_types.description AS request_description', 'associates.fullname', 'associates.photo', 'associates.law_firm')
+                                     ->get();
+
+                                     if(count($service_requests) > 0){
+                                         $result = array();
+                                         foreach ($service_requests as $request) {
+                                             $assignees = ServiceAssignees::where('service_request_id', $request->id)->get();
+
+                                             $assigneeIds = array();
+                                             if(count($assignees)){
+                                                 foreach ($assignees as $assignee) {
+                                                     $associateData = Associate::where('id', $assignee->associate_id)->first();
+                                                     if(count($associateData)){
+                                                         $assigneeIds[] = array('id' => $assignee->associate_id, 'fullname' => $associateData->fullname);
+                                                     }
+                                                 }
+                                             }
+
+                                             /* service request */
+                                             $sr['id'] = $request->id;
+                                             $sr['schedule_id'] = $request->schedule_id;
+                                             $sr['status'] = $request->status;
+                                             $sr['assigned_associate_id'] = $request->assigned_associate_id;
+                                             $sr['insert_time'] = $request->insert_time;
+                                             $sr['update_time'] = $request->update_time;
+
+                                             /* schedules */
+                                             $sr['court_detail_id'] = $request->court_detail_id;
+                                             $sr['associate_id'] = $request->associate_id;
+                                             $sr['date_time'] = $request->date_time;
+                                             $sr['request_type_id'] = $request->request_type_id;
+                                             $sr['notes'] = $request->notes;
+
+                                             /* court details */
+                                             $sr['type'] = $request->type;
+                                             $sr['level'] = $request->level;
+                                             $sr['court_id'] = $request->court_id;
+
+                                             /* court */
+                                             $sr['name'] = $request->name;
+                                             $sr['latitude'] = $request->latitude;
+                                             $sr['longitude'] = $request->longitude;
+                                             $sr['address'] = $request->address;
+
+                                             /* request type */
+                                             $sr['request_type'] = $request->request_type;
+                                             $sr['request_description'] = $request->request_description;
+
+                                             /* service request assignees */
+                                             $sr['assignees'] = $assigneeIds;
+
+                                             /* associates */
+                                             $sr['fullname'] = $request->fullname;
+                                             $sr['photo'] = $request->photo;
+                                             $sr['law_firm'] = $request->law_firm;
+
+                                             $result[]= $sr;
+                                         }
+                                     } else{
+                                         $result = array('0');
+                                     }
+
+            } else {
+
+                $service_requests =  DB::table('service_request_assignees')
+                                     ->leftJoin('service_requests','service_request_assignees.service_request_id','=','service_requests.id')
+                                     ->leftJoin('schedules', 'service_requests.schedule_id', '=', 'schedules.id')
+                                     ->leftJoin('court_details', 'court_details.id', '=', 'schedules.court_detail_id')
+                                     ->leftJoin('courts', 'courts.id', '=','court_details.court_id')
+                                     ->leftJoin('request_types','request_types.id', '=','schedules.request_type_id')
+                                     ->leftJoin('associates','associates.id', '=','service_request_assignees.associate_id')
+
+                                     ->where('service_request_assignees.associate_id', $input['associate_id'])
+                                     ->where('service_requests.status', $input['status'])
+                                     ->skip($input['offset'])
+                                     ->take($input['limit'])
+                                     ->select('service_requests.*', 'schedules.court_detail_id', 'service_request_assignees.associate_id', 'schedules.date_time', 'schedules.request_type_id', 'schedules.notes', 'court_details.type', 'court_details.level', 'court_details.court_id', 'courts.name', 'courts.latitude', 'courts.longitude', 'courts.address','request_types.name AS request_type', 'request_types.description AS request_description', 'associates.fullname', 'associates.photo', 'associates.law_firm')
+                                     ->get();
 
 
-            if(count($service_requests) > 0){
-                $result = array();
-                foreach ($service_requests as $request) {
-                    $assignees = ServiceAssignees::where('service_request_id', $request->id)->get();
+                                     if(count($service_requests) > 0){
+                                         $result = array();
+                                         foreach ($service_requests as $request) {
 
-                    $assigneeIds = array();
-                    if(count($assignees)){
-                        foreach ($assignees as $assignee) {
-                            $associateData = Associate::where('id', $assignee->associate_id)->first();
-                            if(count($associateData)){
-                                $assigneeIds[] = array('id' => $assignee->associate_id, 'fullname' => $associateData->fullname);
-                            }
+                                             /* service request */
+                                             $sr['id'] = $request->id;
+                                             $sr['schedule_id'] = $request->schedule_id;
+                                             $sr['status'] = $request->status;
+                                             $sr['assigned_associate_id'] = $request->assigned_associate_id;
+                                             $sr['insert_time'] = $request->insert_time;
+                                             $sr['update_time'] = $request->update_time;
 
-                        }
-                    }
+                                             /* schedules */
+                                             $sr['court_detail_id'] = $request->court_detail_id;
+                                             $sr['associate_id'] = $request->associate_id;
+                                             $sr['date_time'] = $request->date_time;
+                                             $sr['request_type_id'] = $request->request_type_id;
+                                             $sr['notes'] = $request->notes;
 
-                    /* service request */
-                    $sr['id'] = $request->id;
-                    $sr['schedule_id'] = $request->schedule_id;
-                    $sr['status'] = $request->status;
-                    $sr['assigned_associate_id'] = $request->assigned_associate_id;
-                    $sr['insert_time'] = $request->insert_time;
-                    $sr['update_time'] = $request->update_time;
+                                             /* court details */
+                                             $sr['type'] = $request->type;
+                                             $sr['level'] = $request->level;
+                                             $sr['court_id'] = $request->court_id;
 
-                    /* schedules */
-                    $sr['court_detail_id'] = $request->court_detail_id;
-                    $sr['associate_id'] = $request->associate_id;
-                    $sr['date_time'] = $request->date_time;
-                    $sr['request_type_id'] = $request->request_type_id;
-                    $sr['notes'] = $request->notes;
+                                             /* court */
+                                             $sr['name'] = $request->name;
+                                             $sr['latitude'] = $request->latitude;
+                                             $sr['longitude'] = $request->longitude;
+                                             $sr['address'] = $request->address;
 
-                    /* court details */
-                    $sr['type'] = $request->type;
-                    $sr['level'] = $request->level;
-                    $sr['court_id'] = $request->court_id;
+                                             /* request type */
+                                             $sr['request_type'] = $request->request_type;
+                                             $sr['request_description'] = $request->request_description;
 
-                    /* court */
-                    $sr['name'] = $request->name;
-                    $sr['latitude'] = $request->latitude;
-                    $sr['longitude'] = $request->longitude;
-                    $sr['address'] = $request->address;
+                                             /* associates */
+                                             $sr['fullname'] = $request->fullname;
+                                             $sr['photo'] = $request->photo;
+                                             $sr['law_firm'] = $request->law_firm;
 
-                    /* request type */
-                    $sr['request_type'] = $request->request_type;
-                    $sr['request_description'] = $request->request_description;
+                                             $result[]= $sr;
+                                         }
+                                     } else{
+                                         $result = array('0');
+                                     }
 
-                    /* service request assignees */
-                    $sr['assignees'] = $assigneeIds;
-
-                    /* associates */
-                    $sr['fullname'] = $request->fullname;
-                    $sr['photo'] = $request->photo;
-                    $sr['law_firm'] = $request->law_firm;
-
-                    $result[]= $sr;
-                }
             }
-            else{
-                $result = array('0');
-            }
+
+
+
 
 			return response()->json($result);
 		} catch (\Exception $error) {
