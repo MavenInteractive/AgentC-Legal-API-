@@ -11,10 +11,10 @@
         <p>
             We welcome you to AgentC Legal, you signup for this app {{ date('Y-m-d')}}.
         <br /><br />
-        <span>For any assistance, please email our customer support: support@stumblelegal.com.</span>
+        <span>For any assistance, please email our customer support: <a href="support@agent-c-legal.com"> support@agent-c-legal.com</a>.</span>
         <br /><br />
         <span>Best regards,</span><br /><br />
-        <span>Team Stumble Legal</span>
+        <span>Team AgentC Legal</span>
     </div>
 </body>
 </html>
