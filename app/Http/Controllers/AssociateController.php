@@ -10,6 +10,8 @@ use App\Favorite;
 use App\Court;
 use App\AssociateLocation;
 use Mail;
+use Hash;
+use DB;
 
 class AssociateController extends Controller
 {
