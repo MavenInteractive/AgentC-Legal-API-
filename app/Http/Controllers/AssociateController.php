@@ -70,6 +70,8 @@ class AssociateController extends Controller
 
                     $result = Associate::find($insertedId);
 
+                    $this->sendRegisterEmail($input['email']);
+
                     return response()->json($result);
                     break;
                 case 'edit':
@@ -255,4 +257,16 @@ class AssociateController extends Controller
 
         return;
     }
+
+    public function sendRegisterEmail($email){
+        $associate = Associate::where('email', $email)->first();
+
+        Mail::send('emails.register', array('fullname' => $associate->fullname), function($message) use ($associate){
+            $message->to($associate->email, $associate->fullname)->subject('Welcome to AgentC Legal');
+        });
+
+        return;
+    }
+
+
 }
