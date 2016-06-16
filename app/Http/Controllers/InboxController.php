@@ -14,11 +14,16 @@ class InboxController extends Controller
     public function index(){
         try {
             $input = \Request::only('associate_id');
-			$result = Inbox::where('receiver_associate_id', $input['associate_id'])
+			$messages = Inbox::leftJoin('associates as sender', 'message_inboxes.sender_associate_id', '=', 'sender.id')
+                             ->leftJoin('associates as receiver', 'message_inboxes.receiver_associate_id', '=', 'receiver.id')
+                             ->select('message_inboxes.*','receiver.fullname AS receiver_fullname','sender.fullname AS sender_fullname')
+                             ->where('receiver_associate_id', $input['associate_id'])
                              ->orWhere('sender_associate_id', $input['associate_id'])
-                                  ->get();
-			return response()->json($result);
+                             ->get();
+
+			return response()->json($messages);
 		} catch (\Exception $error) {
+            dd($error);
 			return response()->json(['error' => 'bad_request'], Response::HTTP_BAD_REQUEST);
 		}
     }
