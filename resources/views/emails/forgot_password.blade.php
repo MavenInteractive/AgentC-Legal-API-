@@ -9,7 +9,7 @@
         <span>Dear {{$fullname}}, </span>
         <br />
         <p>
-        We received a request for password retrieval for username {{ $username }} at Stumble Legal App.</p><br />
+        We received a request for password retrieval for username {{ $username }} at Agent-C Legal App.</p><br />
         <span>Your new password is</span><br />
         <strong>{{ $password }}</strong>
         <br /><br />
