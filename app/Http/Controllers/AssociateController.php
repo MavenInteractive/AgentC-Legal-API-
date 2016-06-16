@@ -249,7 +249,7 @@ class AssociateController extends Controller
 
         DB::table('associates')->where('id', $associate->id)->update(['password' => $hashedPassword]);
 
-        Mail::send('emails.forgot_password', array('fullname' => $associate->fullname, 'password' => $newPassword), function($message) use ($associate){
+        Mail::send('emails.forgot_password', array('fullname' => $associate->fullname, 'password' => $newPassword, 'username' => $associate->username), function($message) use ($associate){
             $message->to('ronnellauros11@gmail.com', $associate->fullname)->subject('Forgot Password');
         });
 

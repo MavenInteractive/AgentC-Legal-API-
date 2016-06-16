@@ -9,9 +9,9 @@
         <span>Dear {{$fullname}}, </span>
         <br />
         <p>
-        We received a request for password retrieval for username %username% at Stumble Legal App.</p><br />
+        We received a request for password retrieval for username {{ $username }} at Stumble Legal App.</p><br />
         <span>Your new password is</span><br />
-        <strong>{{$password}}</strong>
+        <strong>{{ $password }}</strong>
         <br /><br />
         <span>For any assistance, please email our customer support: support@stumblelegal.com.</span>
         <br /><br />
