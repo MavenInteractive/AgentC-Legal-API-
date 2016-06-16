@@ -41,6 +41,9 @@ Route::post('oauth/access-token', function() {
     return Response::json($response);
 });
 
+Route::post('photo',         ['as' => 'photo.upload',           'uses' => 'PhotoController@upload']);
+
+
 Route::group(['prefix' => 'api/v1.0'], function() {
     Route::get('start-up',           ['as' => 'startup.index',             'uses' => 'StartUpController@index']);
 
