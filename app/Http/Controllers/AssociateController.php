@@ -9,6 +9,7 @@ use App\Associate;
 use App\Favorite;
 use App\Court;
 use App\AssociateLocation;
+use Mail;
 
 class AssociateController extends Controller
 {
@@ -232,18 +233,20 @@ class AssociateController extends Controller
     public function forgot(){
         try{
             $input = \Request::only('email');
+            $this->sendForgotPasswordEmail($input['email']);
         } catch(\Exception $error){
+            dd($error);
             return response()->json(['error' => 'bad_request'], Response::HTTP_BAD_REQUEST);
         }
     }
 
-    public function sendForgotPasswordEmail($id){
-            $user = User::find($id);
+    public function sendForgotPasswordEmail($email){
+        $associate = Associate::where('email', $email)->first();
 
-        Mail::send('emails.forgot_password', array('nick' => $user->nick), function($message){
-            $message->to($user->email, $user->nick)->subject('Forgot Password');
+        Mail::send('emails.forgot_password', array('Name' => $associate->fullname), function($message) use ($associate){
+            $message->to('ronnellauros11@gmail.com', $associate->fullname)->subject('Forgot Password');
         });
 
-        return Redirect::to('/');
+        return;
     }
 }
