@@ -51,28 +51,39 @@ class AssociateController extends Controller
                 case 'create':
                     $input = \Request::only('email', 'username', 'password', 'fullname', 'phone', 'law_firm', 'position', 'city', 'law_society_ref_number', 'association_number', 'is_private', 'photo');
 
-                    $insertedId = Associate::insertGetId(
-                                            array(
-                                                 'email'                  => $input['email'],
-                                                 'username'               => $input['username'],
-                                                 'password'               => \Hash::make($input['password']),
-                                                 'fullname'               => $input['fullname'],
-                                                 'phone'                  => $input['phone'],
-                                                 'law_firm'               => $input['law_firm'],
-                                                 'position'               => $input['position'],
-                                                 'city'                   => $input['city'],
-                                                 'law_society_ref_number' => $input['law_society_ref_number'],
-                                                 'association_number'     => $input['association_number'],
-                                                 'is_private'             => $input['is_private'],
-                                                 'photo'                  => $input['photo']
-                                                )
-                                            );
+                    $existing = $this->userCheck($input['email'], $input['username']);
 
-                    $result = Associate::find($insertedId);
+                    if($existing == 'true'){
 
-                    $this->sendRegisterEmail($input['email']);
+                        $insertedId = Associate::insertGetId(
+                                                array(
+                                                     'email'                  => $input['email'],
+                                                     'username'               => $input['username'],
+                                                     'password'               => \Hash::make($input['password']),
+                                                     'fullname'               => $input['fullname'],
+                                                     'phone'                  => $input['phone'],
+                                                     'law_firm'               => $input['law_firm'],
+                                                     'position'               => $input['position'],
+                                                     'city'                   => $input['city'],
+                                                     'law_society_ref_number' => $input['law_society_ref_number'],
+                                                     'association_number'     => $input['association_number'],
+                                                     'is_private'             => $input['is_private'],
+                                                     'photo'                  => $input['photo']
+                                                    )
+                                                );
 
-                    return response()->json($result);
+                        $result = Associate::find($insertedId);
+
+                    //    $this->sendRegisterEmail($input['email']);
+
+                        return response()->json($result);
+                    }
+                    else{
+
+                        $result= array('message' => $existing);
+                        return response()->json($result);
+
+                    }
                     break;
                 case 'edit':
                     $input = \Request::only('associate_id','email', 'username', 'password', 'fullname', 'phone', 'law_firm', 'position', 'city', 'law_society_ref_number', 'association_number');
@@ -266,6 +277,26 @@ class AssociateController extends Controller
         });
 
         return;
+    }
+
+    public function userCheck($email, $username){
+
+        $associate = Associate::where('email', '=',$email)->get();
+
+        //check if email is existing
+        if(count($associate) > 0){
+            return "Someone has already used the same email. ";
+        }
+
+        $associate = Associate::where('username', '=',$username)->get();
+
+        //check if username is existing
+        if(count($associate) > 0){
+            return "Someone has already used the same username.";
+        }
+
+        return true;
+
     }
 
 
