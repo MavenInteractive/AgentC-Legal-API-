@@ -11,6 +11,8 @@ use App\Favorite;
 
 class FavoriteController extends Controller
 {
+    use Notify;
+
     public function insert(){
         $input = \Request::only('associate_id','other_associate_id');
 
@@ -18,6 +20,8 @@ class FavoriteController extends Controller
                             'associate_id'       => $input['associate_id'],
                             'other_associate_id' => $input['other_associate_id']
                       ]);
+
+        $this->createNofication($input['associate_id'], $input['other_associate_id'], 'associate_added');
 
         $favorites = Favorite::select('other_associate_id')->where('associate_id',$input['associate_id'])->get();
 

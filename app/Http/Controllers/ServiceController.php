@@ -199,6 +199,7 @@ class ServiceController extends Controller
                         'associate_id'       => $a
                     )
                 );
+                $this->createNofication($input['associate_id'], $a, 'service_request_assigned');
             }
 
 
@@ -285,16 +286,19 @@ class ServiceController extends Controller
                     DB::table('service_requests')->where('id',$input['service_request_id'])
                            ->where('assigned_associate_id',$input['associate_id'])
                            ->update(['status' => '1']);
+                    $this->createNofication($input['associate_id'], 0, 'service_request_accepted');
                     break;
                 case '2':
                     DB::table('service_requests')->where('id',$input['service_request_id'])
                            ->where('assigned_associate_id',$input['associate_id'])
                            ->update(['status' => '2']);
+                    $this->createNofication($input['associate_id'], 0, 'service_request_completed');
                     break;
                 case '3':
                     DB::table('service_requests')->where('id',$input['service_request_id'])
                            ->where('assigned_associate_id',$input['associate_id'])
                            ->update(['status' => '3']);
+                    $this->createNofication($input['associate_id'], 0, 'service_request_accepted');
                     break;
 
             }
