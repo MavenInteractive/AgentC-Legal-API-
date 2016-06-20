@@ -17,6 +17,8 @@ use DB;
 
 class ServiceController extends Controller
 {
+    use Notify;
+    
     public function index(){
         try {
             $input = \Request::only('as_assignor', 'associate_id', 'status', 'offset', 'limit');
