@@ -119,6 +119,18 @@ class ServiceController extends Controller
                                          $result = array();
                                          foreach ($service_requests as $request) {
 
+                                             $assignees = ServiceAssignees::where('service_request_id', $request->id)->get();
+
+                                             $assigneeIds = array();
+                                             if(count($assignees)){
+                                                 foreach ($assignees as $assignee) {
+                                                     $associateData = Associate::where('id', $assignee->associate_id)->first();
+                                                     if(count($associateData)){
+                                                         $assigneeIds[] = array('id' => $assignee->associate_id, 'fullname' => $associateData->fullname);
+                                                     }
+                                                 }
+                                             }
+
                                              /* service request */
                                              $sr['id'] = $request->id;
                                              $sr['schedule_id'] = $request->schedule_id;
@@ -148,6 +160,9 @@ class ServiceController extends Controller
                                              /* request type */
                                              $sr['request_type'] = $request->request_type;
                                              $sr['request_description'] = $request->request_description;
+
+                                             /* service request assignees */
+                                             $sr['assignees'] = $assigneeIds;
 
                                              /* associates */
                                              $sr['fullname'] = $request->fullname;
@@ -315,7 +330,7 @@ class ServiceController extends Controller
             Service::where('id', $input['service_request_id'])->delete();
 
             $this->createNofication($input['associate_id'], 0, 'NotificationTypeAssignorCancelRequest');
-            
+
         } catch (\Exception $error) {
             return response()->json(['error' => 'bad_request'], Response::HTTP_BAD_REQUEST);
         }
