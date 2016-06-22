@@ -204,7 +204,7 @@ class ServiceController extends Controller
                             array(
                                 'schedule_id' => $insertedId,
                                 'status' => 0,
-                                'assigned_associate_id' => 0
+                                'assigned_associate_id' =>  $input['associate_id']
                             )
                         );
             $assigneesNumbers = explode( ',', $input['assignees']);
