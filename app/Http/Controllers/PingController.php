@@ -93,7 +93,11 @@ class PingController extends Controller
                         ->where('service_requests.insert_time','>=',  $requestsTimestamp)
                         ->get();
 
-        $newNotifications = Notification::where('associate_id',$associateId)->where('insert_time','>=', $notificationsTimestamp)->get();
+        $newNotifications = Notification::
+                            leftJoin('associates','notifications.other_associate_id', '=','associates.id')
+                            ->where('associate_id',$associateId)->where('insert_time','>=', $notificationsTimestamp)
+                            ->select('notifications.*','associates.fullname AS other_associate')
+                            ->get();
 
 
         $newMessages = Inbox::where(function($query) use ($associateId){
