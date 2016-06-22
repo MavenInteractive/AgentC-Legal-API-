@@ -21,7 +21,7 @@ class FavoriteController extends Controller
                             'other_associate_id' => $input['other_associate_id']
                       ]);
 
-        $this->createNofication($input['other_associate_id'], $input['associate_id'], 'associate_added');
+        $this->createNofication($input['other_associate_id'], $input['associate_id'], 'NotificationTypeBeenAddedFavourite');
 
         $favorites = Favorite::select('other_associate_id')->where('associate_id',$input['associate_id'])->get();
 

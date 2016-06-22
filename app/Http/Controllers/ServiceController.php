@@ -18,7 +18,7 @@ use DB;
 class ServiceController extends Controller
 {
     use Notify;
-    
+
     public function index(){
         try {
             $input = \Request::only('as_assignor', 'associate_id', 'status', 'offset', 'limit');
@@ -201,7 +201,7 @@ class ServiceController extends Controller
                         'associate_id'       => $a
                     )
                 );
-                $this->createNofication($input['associate_id'], $a, 'service_request_assigned');
+                $this->createNofication($a, $input['associate_id'], 'NotificationTypeAssignedTask');
             }
 
 
@@ -288,19 +288,19 @@ class ServiceController extends Controller
                     DB::table('service_requests')->where('id',$input['service_request_id'])
                            ->where('assigned_associate_id',$input['associate_id'])
                            ->update(['status' => '1']);
-                    $this->createNofication($input['associate_id'], 0, 'service_request_accepted');
+                    $this->createNofication($input['associate_id'], 0, 'NotificationTypeAcceptedRequest');
                     break;
                 case '2':
                     DB::table('service_requests')->where('id',$input['service_request_id'])
                            ->where('assigned_associate_id',$input['associate_id'])
                            ->update(['status' => '2']);
-                    $this->createNofication($input['associate_id'], 0, 'service_request_completed');
+                    $this->createNofication($input['associate_id'], 0, 'NotificationTypeCompletedRequest');
                     break;
                 case '3':
                     DB::table('service_requests')->where('id',$input['service_request_id'])
                            ->where('assigned_associate_id',$input['associate_id'])
                            ->update(['status' => '3']);
-                    $this->createNofication($input['associate_id'], 0, 'service_request_accepted');
+                    $this->createNofication($input['associate_id'], 0, 'NotificationTypeDeclinedRequest');
                     break;
 
             }
@@ -314,6 +314,8 @@ class ServiceController extends Controller
             $input = \Request::only('as_assignor', 'associate_id', 'service_request_id');
             Service::where('id', $input['service_request_id'])->delete();
 
+            $this->createNofication($input['associate_id'], 0, 'NotificationTypeAssignorCancelRequest');
+            
         } catch (\Exception $error) {
             return response()->json(['error' => 'bad_request'], Response::HTTP_BAD_REQUEST);
         }
