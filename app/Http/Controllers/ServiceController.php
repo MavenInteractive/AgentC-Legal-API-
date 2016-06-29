@@ -31,7 +31,7 @@ class ServiceController extends Controller
                                      ->leftJoin('courts', 'courts.id', '=','court_details.court_id')
                                      ->leftJoin('request_types','request_types.id', '=','schedules.request_type_id')
                                      ->leftJoin('associates','associates.id', '=','schedules.associate_id')
-                                     ->where('schedules.associate_id', $input['associate_id'])
+                                     ->where('service_requests.assigned_associate_id', $input['associate_id'])
                                      ->where('service_requests.status', $input['status'])
                                      ->skip($input['offset'])
                                      ->take($input['limit'])
@@ -331,5 +331,15 @@ class ServiceController extends Controller
         } catch (\Exception $error) {
             return response()->json(['error' => 'bad_request'], Response::HTTP_BAD_REQUEST);
         }
+    }
+
+    public function sendStatusEmail($email){
+        $associate = Associate::where('email', $email)->first();
+
+        Mail::send('emails.register', array('fullname' => $associate->fullname), function($message) use ($associate){
+            $message->to($associate->email, $associate->fullname)->subject('Welcome to AgentC Legal');
+        });
+
+        return;
     }
 }
