@@ -105,7 +105,7 @@ class ServiceController extends Controller
                                      ->leftJoin('court_details', 'court_details.id', '=', 'schedules.court_detail_id')
                                      ->leftJoin('courts', 'courts.id', '=','court_details.court_id')
                                      ->leftJoin('request_types','request_types.id', '=','schedules.request_type_id')
-                                     ->leftJoin('associates','associates.id', '=','service_request_assignees.associate_id')
+                                     ->leftJoin('associates','associates.id', '=','service_requests.assigned_associate_id')
 
                                      ->where('service_request_assignees.associate_id', $input['associate_id'])
                                      ->where('service_requests.status', $input['status'])
