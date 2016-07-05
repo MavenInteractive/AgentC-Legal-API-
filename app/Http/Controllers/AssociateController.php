@@ -93,7 +93,6 @@ class AssociateController extends Controller
                     $associate = Associate::where('id',$input['associate_id'])->update([
                         'email'     => $input['email'],
                         'username' => $input['username'],
-                        'password' => \Hash::make($input['password']),
                         'fullname' => $input['fullname'],
                         'phone' => $input['phone'],
                         'law_firm' => $input['law_firm'],
@@ -103,6 +102,12 @@ class AssociateController extends Controller
                         'law_society_ref_number' => $input['law_society_ref_number'],
                         'association_number' => $input['association_number']
                     ]);
+
+                    if(!empty($input['password'])){
+                        $associate = Associate::where('id',$input['associate_id'])->update([
+                            'password' => \Hash::make($input['password']),
+                        ]);
+                    }
 
 
                     $result = Associate::findOrFail($input['associate_id']);
