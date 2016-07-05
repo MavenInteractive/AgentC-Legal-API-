@@ -12,6 +12,8 @@ use App\AssociateLocation;
 use Mail;
 use Hash;
 use DB;
+use Authorizer;
+use Auth;
 
 class AssociateController extends Controller
 {
@@ -298,6 +300,34 @@ class AssociateController extends Controller
 
         return true;
 
+    }
+
+    public function loginAssociate(){
+        $response = Authorizer::issueAccessToken();
+        if(Auth::user()){
+            $response['user_id'] = Auth::user()->id;
+            $response['username'] = Auth::user()->username;
+            $response['fullname'] = Auth::user()->fullname;
+            $response['email'] = Auth::user()->email;
+            $response['phone'] = Auth::user()->phone;
+            $response['photo'] = Auth::user()->photo;
+            $response['law_firm'] = Auth::user()->law_firm;
+            $response['position'] = Auth::user()->position;
+            $response['city'] = Auth::user()->city;
+
+            $favorites = Favorite::select('other_associate_id')->where('associate_id',$response['user_id'])->get();
+
+            if(count($favorites)){
+                foreach ($favorites as $favorite) {
+                    $favoriteIds[] = $favorite->other_associate_id;
+                }
+
+                $response['favorites'] = $favoriteIds;
+            }
+
+            return response()->json($response);
+        }
+        return response()->json($response);
     }
 
 

@@ -24,22 +24,7 @@ Route::get('/register',function(){$user = new App\User();
 });
 
 
-Route::post('oauth/access-token', function() {
-    $response = Authorizer::issueAccessToken();
-    if(Auth::user()){
-        $response['user_id'] = Auth::user()->id;
-        $response['username'] = Auth::user()->username;
-        $response['fullname'] = Auth::user()->fullname;
-        $response['email'] = Auth::user()->email;
-        $response['phone'] = Auth::user()->phone;
-        $response['photo'] = Auth::user()->photo;
-        $response['law_firm'] = Auth::user()->law_firm;
-        $response['position'] = Auth::user()->position;
-        $response['city'] = Auth::user()->city;
-        return Response::json($response);
-    }
-    return Response::json($response);
-});
+Route::post('oauth/access-token', ['as' => 'associate.login',   'uses' => 'AssociateController@loginAssociate']);
 
 Route::post('photo',         ['as' => 'photo.upload',           'uses' => 'PhotoController@upload']);
 
