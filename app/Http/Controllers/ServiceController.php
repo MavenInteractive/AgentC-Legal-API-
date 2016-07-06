@@ -26,17 +26,34 @@ class ServiceController extends Controller
             if($input['as_assignor'] == 1){
 
                 $service_requests =  DB::table('service_requests')
-                                     ->leftJoin('schedules', 'service_requests.schedule_id', '=', 'schedules.id')
-                                     ->leftJoin('court_details', 'court_details.id', '=', 'schedules.court_detail_id')
-                                     ->leftJoin('courts', 'courts.id', '=','court_details.court_id')
-                                     ->leftJoin('request_types','request_types.id', '=','schedules.request_type_id')
-                                     ->leftJoin('associates','associates.id', '=','schedules.associate_id')
-                                     ->where('service_requests.assigned_associate_id', $input['associate_id'])
-                                     ->where('service_requests.status', $input['status'])
-                                     ->skip($input['offset'])
-                                     ->take($input['limit'])
-                                     ->select('service_requests.*', 'schedules.court_detail_id', 'schedules.associate_id', 'schedules.date_time', 'schedules.request_type_id', 'schedules.notes', 'court_details.type', 'court_details.level', 'court_details.court_id', 'courts.name', 'courts.latitude', 'courts.longitude', 'courts.address','request_types.name AS request_type', 'request_types.description AS request_description', 'associates.fullname', 'associates.photo', 'associates.law_firm')
-                                     ->get();
+                    ->select('service_requests.*', 'schedules.court_detail_id', 'schedules.associate_id', 'schedules.date_time', 'schedules.request_type_id', 'schedules.notes', 'court_details.type', 'court_details.level', 'court_details.court_id', 'courts.name', 'courts.latitude', 'courts.longitude', 'courts.address','request_types.name AS request_type', 'request_types.description AS request_description', 'associates.fullname', 'associates.photo', 'associates.law_firm')
+                    ->leftJoin('schedules', 'service_requests.schedule_id', '=', 'schedules.id')
+                    ->leftJoin('court_details', 'court_details.id', '=', 'schedules.court_detail_id')
+                    ->leftJoin('courts', 'courts.id', '=','court_details.court_id')
+                    ->leftJoin('request_types','request_types.id', '=','schedules.request_type_id')
+                    ->leftJoin('associates','associates.id', '=','schedules.associate_id');
+
+                if (isset($input['associate_id']) && $input['associate_id'] <> '')
+                {
+                    $service_requests = $service_requests->where('service_requests.assigned_associate_id', $input['associate_id']);
+                }
+
+                if (isset($input['status']) && $input['status'] <> '')
+                {
+                    $service_requests = $service_requests->where('service_requests.status', $input['status']);
+                }
+
+                if (isset($input['offset']) && $input['offset'] > 0)
+                {
+                    $service_requests = $service_requests->skip($input['offset']);
+                }
+
+                if (isset($input['limit']) && $input['limit'] > 0)
+                {
+                    $service_requests = $service_requests->take($input['limit']);
+                }
+
+                $service_requests = $service_requests->get();
 
                                      if(count($service_requests) > 0){
                                          $result = array();
