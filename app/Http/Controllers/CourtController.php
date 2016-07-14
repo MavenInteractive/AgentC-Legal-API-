@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 use App\Http\Requests;
-use App\AssociateLocation;
+use App\Service;
 use App\Court;
 
 class CourtController extends Controller
@@ -28,10 +28,15 @@ class CourtController extends Controller
    public function sched(){
        try{
            $input = \Request::only('court_id','date');
-           $result = AssociateLocation::leftJoin('associates','associates.id','=', 'associate_location.associate_id')
-                   ->where('court_id',$input['court_id'])
-                   ->where('date_time', 'LIKE', '%'.$input['date'].'%')
-                   ->get();
+           $result = Service::leftJoin('schedules','schedules.id','=','service_requests.schedule_id')
+                            ->leftJoin('court_details','court_details.id','=','schedules.court_detail_id')
+                            ->leftJoin('courts','courts.id','=','court_details.court_id')
+                            ->leftJoin('associates','associates.id','=','schedules.associate_id')
+                            ->where('service_requests.insert_time','LIKE', '%'.$input['date'].'%')
+                            ->where('court_id',$input['court_id'])
+                            ->select('associates.*')
+                            ->get();
+
             return response()->json($result);
        } catch(\Exception $error){
            dd($error);
