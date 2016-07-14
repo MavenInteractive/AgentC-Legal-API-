@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 use App\Http\Requests;
+use App\AssociateLocation;
 use App\Court;
 
 class CourtController extends Controller
@@ -23,5 +24,19 @@ class CourtController extends Controller
 			return response()->json(['error' => 'bad_request'], Response::HTTP_BAD_REQUEST);
 		}
     }
+
+   public function sched(){
+       try{
+           $input = \Request::only('court_id','date');
+           $result = AssociateLocation::leftJoin('associates','associates.id','=', 'associate_location.associate_id')
+                   ->where('court_id',$input['court_id'])
+                   ->where('date_time', 'LIKE', '%'.$input['date'].'%')
+                   ->get();
+            return response()->json($result);
+       } catch(\Exception $error){
+           dd($error);
+           return response()->json(['error' => 'bad_request'], Response::HTTP_BAD_REQUEST);
+       }
+   }
 
 }
