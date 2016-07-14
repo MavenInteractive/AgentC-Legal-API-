@@ -30,10 +30,9 @@ class CourtController extends Controller
            $input = \Request::only('court_id','date');
            $result = Service::leftJoin('schedules','schedules.id','=','service_requests.schedule_id')
                             ->leftJoin('court_details','court_details.id','=','schedules.court_detail_id')
-                            ->leftJoin('courts','courts.id','=','court_details.court_id')
+                            ->leftJoin('courts','courts.id','=',$input['court_id'])
                             ->leftJoin('associates','associates.id','=','schedules.associate_id')
                             ->where('service_requests.insert_time','LIKE', '%'.$input['date'].'%')
-                            ->where('courts.id',$input['court_id'])
                             ->select('associates.*')
                             ->get();
 
