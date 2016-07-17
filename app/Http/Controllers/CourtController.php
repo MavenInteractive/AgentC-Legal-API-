@@ -28,7 +28,14 @@ class CourtController extends Controller
    public function sched(){
        try{
            $input = \Request::only('court_id','date');
-           $result = Service::leftJoin('schedules','schedules.id','=','service_requests.schedule_id')
+           if (date('Y-m-d') == date('Y-m-d', strtotime($input['date']))) {
+               $result = AssociateLocation::leftJoin('associates','associates.id','=', 'associate_location.associate_id')
+                ->where('court_id',$input['court_id'])
+                ->where('date_time', 'LIKE', '%'.$input['date'].'%')
+                ->get();            
+           }
+           else{
+                $result = Service::leftJoin('schedules','schedules.id','=','service_requests.schedule_id')
                             ->leftJoin('court_details','court_details.id','=','schedules.court_detail_id')
                             // ->leftJoin('courts','courts.id','=','court_details.court_id')
                             ->leftJoin('associates','associates.id','=','schedules.associate_id')
@@ -36,7 +43,7 @@ class CourtController extends Controller
                             ->where('schedules.court_detail_id',$input['court_id'])
                             ->select('associates.*')
                             ->get();
-
+            }
             return response()->json($result);
        } catch(\Exception $error){
            dd($error);
