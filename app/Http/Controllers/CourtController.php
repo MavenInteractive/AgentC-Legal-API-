@@ -32,12 +32,12 @@ class CourtController extends Controller
                $result = AssociateLocation::leftJoin('associates','associates.id','=', 'associate_location.associate_id')
                 ->where('court_id',$input['court_id'])
                 ->where('date_time', 'LIKE', '%'.$input['date'].'%')
-                ->get();            
+                ->get();
            }
            else{
                 $result = Service::leftJoin('schedules','schedules.id','=','service_requests.schedule_id')
+                            ->leftJoin('service_request_assignees','service_requests.id','=','service_request_assignees.service_request_id')
                             ->leftJoin('court_details','court_details.id','=','schedules.court_detail_id')
-                            // ->leftJoin('courts','courts.id','=','court_details.court_id')
                             ->leftJoin('associates','associates.id','=','schedules.associate_id')
                             ->where('service_requests.insert_time','LIKE', '%'.$input['date'].'%')
                             ->where('schedules.court_detail_id',$input['court_id'])
