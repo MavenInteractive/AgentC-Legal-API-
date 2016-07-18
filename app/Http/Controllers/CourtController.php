@@ -10,6 +10,7 @@ use App\Service;
 use App\Court;
 use App\Schedule;
 use App\CourtDetails;
+use App\ServiceAssignees;
 
 class CourtController extends Controller
 {
@@ -47,7 +48,7 @@ class CourtController extends Controller
                 //             ->select('associates.*')
                 //             ->get();
 
-                $result = Schedule::leftJoin('court_details','court_details.id','=','schedules.court_detail_id')
+                $sched = Schedule::leftJoin('court_details','court_details.id','=','schedules.court_detail_id')
                           ->leftJoin('service_requests','service_requests.schedule_id','=','schedules.id')
                           ->leftJoin('courts','courts.id','=','court_details.court_id')
                           ->where('schedules.court_detail_id',$input['court_id'])
@@ -55,19 +56,20 @@ class CourtController extends Controller
                           ->select('service_requests.*')
                           ->get();
 
-                // if(count($sched) > 0){
-                //
-                //     foreach ($sched as $sc) {
-                //         Service::where('schedule_id')
-                //         $serviceRequestsIDs =
-                //
-                //     }
-                //
-                // } else {
-                //
-                //     $result= array('0');
-                //
-                // }
+                if(count($sched) > 0){
+                    $sV = array();
+                    foreach ($sched as $sc) {
+                        $sV[] = ServiceAssignees::leftJoin('associates','associates.id','=','service_request_assignees.associate_id')
+                        ->where('service_request_id', $sc['id'])->get();
+                    }
+                    $result = $sV;
+
+
+                } else {
+
+                    $result= array('0');
+
+                }
 
                 return response()->json($result);
             }
