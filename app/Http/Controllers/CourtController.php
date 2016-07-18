@@ -12,6 +12,7 @@ use App\Schedule;
 use App\CourtDetails;
 use App\ServiceAssignees;
 use App\AssociateLocation;
+use App\Favorite;
 
 class CourtController extends Controller
 {
@@ -31,12 +32,18 @@ class CourtController extends Controller
 
    public function sched(){
        try{
-           $input = \Request::only('court_id','date');
+           $input = \Request::only('court_id','date','associate_id');
            if (date('Y-m-d') == date('Y-m-d', strtotime($input['date']))) {
                $result = AssociateLocation::leftJoin('associates','associates.id','=', 'associate_location.associate_id')
                 ->where('court_id',$input['court_id'])
                 ->where('date_time', 'LIKE', '%'.$input['date'].'%')
                 ->get();
+
+                $fav = Favorite::leftJoin('associates','associates.id','=','favorites.associate_id')
+                                ->where('favorites.associate_id',$input['associate_id'])
+                                ->select('associates.*')
+                                ->get();
+                $result['favorites'] = $fav;
                 return response()->json($result);
            }
            else{
@@ -66,11 +73,20 @@ class CourtController extends Controller
                         ->first();
                     }
                     $result = $sV;
+                    $fav = Favorite::leftJoin('associates','associates.id','=','favorites.associate_id')
+                                    ->where('favorites.associate_id',$input['associate_id'])
+                                    ->select('associates.*')
+                                    ->get();
+                    $result['favorites'] = $fav;
 
 
                 } else {
 
-                    $result= array('0');
+                    $fav = Favorite::leftJoin('associates','associates.id','=','favorites.associate_id')
+                                    ->where('favorites.associate_id',$input['associate_id'])
+                                    ->select('associates.*')
+                                    ->get();
+                    $result['favorites'] = $fav;
 
                 }
 
