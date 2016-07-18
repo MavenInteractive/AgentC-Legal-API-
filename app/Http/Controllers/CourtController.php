@@ -43,7 +43,7 @@ class CourtController extends Controller
                                 ->where('favorites.associate_id',$input['associate_id'])
                                 ->select('associates.*')
                                 ->get();
-                $result  = array_merge($result,$fav);
+                $result  = array_combine($result,$fav);
                 return response()->json($result);
            }
            else{
@@ -77,7 +77,7 @@ class CourtController extends Controller
                                     ->where('favorites.associate_id',$input['associate_id'])
                                     ->select('associates.*')
                                     ->get();
-                    $result  = array_merge($result,$fav);
+                    $result  = array_combine($result,$fav);
 
 
                 } else {
@@ -86,7 +86,7 @@ class CourtController extends Controller
                                     ->where('favorites.associate_id',$input['associate_id'])
                                     ->select('associates.*')
                                     ->get();
-                    $result  = array_merge($result,$fav);
+                    $result  = array_combine($result,$fav);
 
                 }
 
