@@ -62,7 +62,7 @@ class CourtController extends Controller
                         $sV[] = ServiceAssignees::leftJoin('associates','associates.id','=','service_request_assignees.associate_id')
                         ->where('service_request_id', $sc['id'])
                         ->select('associates.*')
-                        ->get();
+                        ->first();
                     }
                     $result = $sV;
 
