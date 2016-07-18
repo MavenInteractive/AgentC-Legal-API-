@@ -43,7 +43,9 @@ class CourtController extends Controller
                                 ->where('favorites.associate_id',$input['associate_id'])
                                 ->select('associates.*')
                                 ->get();
-                $result[] = $fav;
+                foreach ($fav as $f) {
+                    $result[] = $f;
+                }
                 return response()->json($result);
            }
            else{
@@ -77,7 +79,9 @@ class CourtController extends Controller
                                     ->where('favorites.associate_id',$input['associate_id'])
                                     ->select('associates.*')
                                     ->get();
-                    $result[] = $fav;
+                    foreach ($fav as $f) {
+                        $result[] = $f;
+                    }
 
 
                 } else {
@@ -86,7 +90,11 @@ class CourtController extends Controller
                                     ->where('favorites.associate_id',$input['associate_id'])
                                     ->select('associates.*')
                                     ->get();
-                    $result[] = $fav;
+
+                    foreach ($fav as $f) {
+                        $result[] = $f;
+                    }
+
 
                 }
 
