@@ -46,7 +46,9 @@ class CourtController extends Controller
                 foreach ($fav as $f) {
                     $result[] = $f;
                 }
-                return response()->json(array_unique($result, SORT_REGULAR));
+
+                $result = array_map("unserialize", array_unique(array_map("serialize", $result)));
+                return response()->json($result);
            }
            else{
                 // $result = Service::leftJoin('schedules','schedules.id','=','service_requests.schedule_id')
@@ -97,7 +99,7 @@ class CourtController extends Controller
 
 
                 }
-
+                $result = array_map("unserialize", array_unique(array_map("serialize", $result)));
                 return response()->json(array_unique($result, SORT_REGULAR));
             }
 
