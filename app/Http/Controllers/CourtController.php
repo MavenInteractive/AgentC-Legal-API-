@@ -46,7 +46,7 @@ class CourtController extends Controller
                 foreach ($fav as $f) {
                     $result[] = $f;
                 }
-                return response()->json($result);
+                return response()->json(array_unique($result, SORT_REGULAR));
            }
            else{
                 // $result = Service::leftJoin('schedules','schedules.id','=','service_requests.schedule_id')
@@ -98,7 +98,7 @@ class CourtController extends Controller
 
                 }
 
-                return response()->json($result);
+                return response()->json(array_unique($result, SORT_REGULAR));
             }
 
        } catch(\Exception $error){
