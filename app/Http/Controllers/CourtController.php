@@ -49,8 +49,8 @@ class CourtController extends Controller
 
                 $result = Schedule::leftJoin('court_details','court_details.id','=','schedules.court_detail_id')
                           ->leftJoin('service_requests','service_requests.schedule_id','=','schedules.id')
-                          ->leftJoin('court','court.id','=','court_details.court_id')
-                          ->where('court.id',$input['court_id'])
+                          ->leftJoin('courts','courts.id','=','court_details.court_id')
+                          ->where('courts.id',$input['court_id'])
                           ->where('schedules.insert_time','LIKE', '%'.$input['date'].'%')
                           ->select('service_requests.*')
                           ->get();
