@@ -53,7 +53,7 @@ class CourtController extends Controller
                           ->leftJoin('service_requests','service_requests.schedule_id','=','schedules.id')
                           ->leftJoin('courts','courts.id','=','court_details.court_id')
                           ->where('schedules.court_detail_id',$input['court_id'])
-                          ->where('schedules.insert_time','LIKE', '%'.$input['date'].'%')
+                          ->where('schedules.date_time','LIKE', '%'.$input['date'].'%')
                           ->select('service_requests.*')
                           ->get();
 
