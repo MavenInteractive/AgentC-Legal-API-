@@ -39,7 +39,7 @@ class CourtController extends Controller
                 ->where('date_time', 'LIKE', '%'.$input['date'].'%')
                 ->get();
 
-                $fav = Favorite::leftJoin('associates','associates.id','=','favorites.associate_id')
+                $fav = Favorite::leftJoin('associates','associates.id','=','favorites.other_associate_id')
                                 ->where('favorites.associate_id',$input['associate_id'])
                                 ->select('associates.*')
                                 ->get();
@@ -73,7 +73,7 @@ class CourtController extends Controller
                         ->first();
                     }
                     $result = $sV;
-                    $fav = Favorite::leftJoin('associates','associates.id','=','favorites.associate_id')
+                    $fav = Favorite::leftJoin('associates','associates.id','=','favorites.other_associate_id')
                                     ->where('favorites.associate_id',$input['associate_id'])
                                     ->select('associates.*')
                                     ->get();
@@ -82,7 +82,7 @@ class CourtController extends Controller
 
                 } else {
 
-                    $fav = Favorite::leftJoin('associates','associates.id','=','favorites.associate_id')
+                    $fav = Favorite::leftJoin('associates','associates.id','=','favorites.other_associate_id')
                                     ->where('favorites.associate_id',$input['associate_id'])
                                     ->select('associates.*')
                                     ->get();
