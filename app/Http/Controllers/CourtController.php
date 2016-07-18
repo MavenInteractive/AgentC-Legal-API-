@@ -11,6 +11,7 @@ use App\Court;
 use App\Schedule;
 use App\CourtDetails;
 use App\ServiceAssignees;
+use App\AssociateLocation;
 
 class CourtController extends Controller
 {
