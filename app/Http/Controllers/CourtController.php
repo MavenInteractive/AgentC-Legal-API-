@@ -33,18 +33,43 @@ class CourtController extends Controller
                 ->where('court_id',$input['court_id'])
                 ->where('date_time', 'LIKE', '%'.$input['date'].'%')
                 ->get();
+                return response()->json($result);
            }
            else{
-                $result = Service::leftJoin('schedules','schedules.id','=','service_requests.schedule_id')
-                            ->leftJoin('service_request_assignees','service_requests.id','=','service_request_assignees.service_request_id')
-                            ->leftJoin('court_details','court_details.id','=','schedules.court_detail_id')
-                            ->leftJoin('associates','associates.id','=','schedules.associate_id')
-                            ->where('service_requests.insert_time','LIKE', '%'.$input['date'].'%')
-                            ->where('schedules.court_detail_id',$input['court_id'])
-                            ->select('associates.*')
-                            ->get();
+                // $result = Service::leftJoin('schedules','schedules.id','=','service_requests.schedule_id')
+                //             ->leftJoin('service_request_assignees','service_requests.id','=','service_request_assignees.service_request_id')
+                //             ->leftJoin('court_details','court_details.id','=','schedules.court_detail_id')
+                //             ->leftJoin('associates','associates.id','=','schedules.associate_id')
+                //             ->where('service_requests.insert_time','LIKE', '%'.$input['date'].'%')
+                //             ->where('schedules.court_detail_id',$input['court_id'])
+                //             ->select('associates.*')
+                //             ->get();
+
+                $result = Schedule::leftJoin('court_details','court_details.id','=','schedules.court_detail_id')
+                          ->leftJoin('service_requests','service_requests.schedule_id','=','schedules.id')
+                          ->leftJoin('court','court.id','=','court_details.court_id')
+                          ->where('court.id',$input['court_id'])
+                          ->where('schedules.insert_time','LIKE', '%'.$input['date'].'%')
+                          ->select('service_requests.*')
+                          ->get();
+
+                // if(count($sched) > 0){
+                //
+                //     foreach ($sched as $sc) {
+                //         Service::where('schedule_id')
+                //         $serviceRequestsIDs =
+                //
+                //     }
+                //
+                // } else {
+                //
+                //     $result= array('0');
+                //
+                // }
+
+                return response()->json($result);
             }
-            return response()->json($result);
+
        } catch(\Exception $error){
            dd($error);
            return response()->json(['error' => 'bad_request'], Response::HTTP_BAD_REQUEST);
