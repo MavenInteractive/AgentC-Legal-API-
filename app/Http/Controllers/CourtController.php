@@ -47,7 +47,7 @@ class CourtController extends Controller
                     $result[] = $f;
                 }
 
-                $result = array_map("unserialize", array_unique(array_map("serialize", $result)));
+                $result = $this->unique_multidim_array($result , 'id');
                 return response()->json($result);
            }
            else{
@@ -99,8 +99,8 @@ class CourtController extends Controller
 
 
                 }
-                $result = array_map("unserialize", array_unique(array_map("serialize", $result)));
-                return response()->json(array_unique($result, SORT_REGULAR));
+                $result = $this->unique_multidim_array($result , 'id');
+                return response()->json($result);
             }
 
        } catch(\Exception $error){
@@ -108,5 +108,20 @@ class CourtController extends Controller
            return response()->json(['error' => 'bad_request'], Response::HTTP_BAD_REQUEST);
        }
    }
+
+   public function unique_multidim_array($array, $key) {
+    $temp_array = array();
+    $i = 0;
+    $key_array = array();
+
+    foreach($array as $val) {
+        if (!in_array($val[$key], $key_array)) {
+            $key_array[$i] = $val[$key];
+            $temp_array[$i] = $val;
+        }
+        $i++;
+    }
+    return $temp_array;
+}
 
 }
