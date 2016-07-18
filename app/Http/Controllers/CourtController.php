@@ -8,6 +8,8 @@ use Illuminate\Http\Response;
 use App\Http\Requests;
 use App\Service;
 use App\Court;
+use App\Schedule;
+use App\CourtDetails;
 
 class CourtController extends Controller
 {
