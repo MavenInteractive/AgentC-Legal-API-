@@ -39,15 +39,15 @@ class CourtController extends Controller
                 ->where('date_time', 'LIKE', '%'.$input['date'].'%')
                 ->get();
 
-                $fav = Favorite::leftJoin('associates','associates.id','=','favorites.other_associate_id')
-                                ->where('favorites.associate_id',$input['associate_id'])
-                                ->select('associates.*')
-                                ->get();
-                foreach ($fav as $f) {
-                    $result[] = $f;
-                }
-
-                $result = $this->unique_multidim_array($result , 'id');
+                // $fav = Favorite::leftJoin('associates','associates.id','=','favorites.other_associate_id')
+                //                 ->where('favorites.associate_id',$input['associate_id'])
+                //                 ->select('associates.*')
+                //                 ->get();
+                // foreach ($fav as $f) {
+                //     $result[] = $f;
+                // }
+                //
+                // $result = $this->unique_multidim_array($result , 'id');
                 return response()->json($result);
            }
            else{
@@ -60,7 +60,7 @@ class CourtController extends Controller
                 //             ->select('associates.*')
                 //             ->get();
 
-                $sched = Schedule::leftJoin('court_details','court_details.id','=','schedules.court_detail_id')
+                $result = Schedule::leftJoin('court_details','court_details.id','=','schedules.court_detail_id')
                           ->leftJoin('service_requests','service_requests.schedule_id','=','schedules.id')
                           ->leftJoin('courts','courts.id','=','court_details.court_id')
                           ->where('schedules.court_detail_id',$input['court_id'])
@@ -68,38 +68,38 @@ class CourtController extends Controller
                           ->select('service_requests.*')
                           ->get();
 
-                if(count($sched) > 0){
-                    $sV = array();
-                    foreach ($sched as $sc) {
-                        $sV[] = ServiceAssignees::leftJoin('associates','associates.id','=','service_request_assignees.associate_id')
-                        ->where('service_request_id', $sc['id'])
-                        ->select('associates.*')
-                        ->first();
-                    }
-                    $result = $sV;
-                    $fav = Favorite::leftJoin('associates','associates.id','=','favorites.other_associate_id')
-                                    ->where('favorites.associate_id',$input['associate_id'])
-                                    ->select('associates.*')
-                                    ->get();
-                    foreach ($fav as $f) {
-                        $result[] = $f;
-                    }
-
-
-                } else {
-
-                    $fav = Favorite::leftJoin('associates','associates.id','=','favorites.other_associate_id')
-                                    ->where('favorites.associate_id',$input['associate_id'])
-                                    ->select('associates.*')
-                                    ->get();
-
-                    foreach ($fav as $f) {
-                        $result[] = $f;
-                    }
-
-
-                }
-                $result = $this->unique_multidim_array($result , 'id');
+                // if(count($sched) > 0){
+                //     $sV = array();
+                //     foreach ($sched as $sc) {
+                //         $sV[] = ServiceAssignees::leftJoin('associates','associates.id','=','service_request_assignees.associate_id')
+                //         ->where('service_request_id', $sc['id'])
+                //         ->select('associates.*')
+                //         ->first();
+                //     }
+                //     $result = $sV;
+                //     $fav = Favorite::leftJoin('associates','associates.id','=','favorites.other_associate_id')
+                //                     ->where('favorites.associate_id',$input['associate_id'])
+                //                     ->select('associates.*')
+                //                     ->get();
+                //     foreach ($fav as $f) {
+                //         $result[] = $f;
+                //     }
+                //
+                //
+                // } else {
+                //
+                //     $fav = Favorite::leftJoin('associates','associates.id','=','favorites.other_associate_id')
+                //                     ->where('favorites.associate_id',$input['associate_id'])
+                //                     ->select('associates.*')
+                //                     ->get();
+                //
+                //     foreach ($fav as $f) {
+                //         $result[] = $f;
+                //     }
+                //
+                //
+                // }
+                // $result = $this->unique_multidim_array($result , 'id');
                 return response()->json($result);
             }
 
