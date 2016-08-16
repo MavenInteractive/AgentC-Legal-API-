@@ -123,8 +123,7 @@ class PingController extends Controller
     public function getNearbyCourts($latitude, $longitude, $radius = 1.0, $distanceUnit = 111.045)
     {
         $query = '
-SELECT id, name, address,
-   latitude, longitude, distance
+SELECT id, name, address, latitude, longitude, distance
 FROM (
 SELECT c.id,
     c.name,
@@ -139,12 +138,12 @@ SELECT c.id,
              * SIN(RADIANS(c.latitude)))) AS distance
 FROM courts AS c
 JOIN (
-    SELECT  '.$latitude.'  AS latpoint,  '.$longitude.' AS longpoint,
-            '.$radius.' AS radius,  '.$distanceUnit.' AS distance_unit
+    SELECT  '.$latitude.' AS latpoint, '.$longitude.' AS longpoint,
+            '.$radius.' AS radius, '.$distanceUnit.' AS distance_unit
 ) AS p ON 1=1
 WHERE c.latitude
-BETWEEN p.latpoint  - (p.radius / p.distance_unit)
-     AND p.latpoint  + (p.radius / p.distance_unit)
+BETWEEN p.latpoint - (p.radius / p.distance_unit)
+     AND p.latpoint + (p.radius / p.distance_unit)
 AND c.longitude
 BETWEEN p.longpoint - (p.radius / (p.distance_unit * COS(RADIANS(p.latpoint))))
      AND p.longpoint + (p.radius / (p.distance_unit * COS(RADIANS(p.latpoint))))
