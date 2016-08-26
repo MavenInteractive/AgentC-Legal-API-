@@ -76,7 +76,7 @@ class AssociateController extends Controller
 
                         $result = Associate::find($insertedId);
 
-                    //    $this->sendRegisterEmail($input['email']);
+                        $this->sendRegisterEmail($input['email']);
 
                         return response()->json($result);
                     }
