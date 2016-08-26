@@ -131,24 +131,23 @@ SELECT c.id,
     c.latitude, c.longitude,
     p.radius,
     p.distance_unit
-             * DEGREES(ACOS(COS(RADIANS(p.latpoint))
-             * COS(RADIANS(c.latitude))
-             * COS(RADIANS(p.longpoint - c.longitude))
-             + SIN(RADIANS(p.latpoint))
-             * SIN(RADIANS(c.latitude)))) AS distance
+        * DEGREES(ACOS(COS(RADIANS(p.latpoint))
+        * COS(RADIANS(c.latitude))
+        * COS(RADIANS(p.longpoint - c.longitude))
+        + SIN(RADIANS(p.latpoint))
+        * SIN(RADIANS(c.latitude)))) AS distance
 FROM courts AS c
 JOIN (
-    SELECT  '.$latitude.' AS latpoint, '.$longitude.' AS longpoint,
-            '.$radius.' AS radius, '.$distanceUnit.' AS distance_unit
+    SELECT  '.$latitude.' AS latpoint, '.$longitude.' AS longpoint, '.$radius.' AS radius, '.$distanceUnit.' AS distance_unit
 ) AS p ON 1=1
 WHERE c.latitude
 BETWEEN p.latpoint - (p.radius / p.distance_unit)
-     AND p.latpoint + (p.radius / p.distance_unit)
+    AND p.latpoint + (p.radius / p.distance_unit)
 AND c.longitude
 BETWEEN p.longpoint - (p.radius / (p.distance_unit * COS(RADIANS(p.latpoint))))
-     AND p.longpoint + (p.radius / (p.distance_unit * COS(RADIANS(p.latpoint))))
+    AND p.longpoint + (p.radius / (p.distance_unit * COS(RADIANS(p.latpoint))))
 ) AS d
-WHERE distance <= radius
+WHERE distance <= radius AND distance > 0
 ORDER BY distance';
 
         $nearestLocations = DB::select(DB::raw($query));

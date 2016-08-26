@@ -88,16 +88,16 @@ class AssociateController extends Controller
                     $input = \Request::only('associate_id', 'email', 'username', 'password', 'fullname', 'phone', 'law_firm', 'position', 'city', 'law_society_ref_number', 'association_number', 'photo');
 
                     $associate = Associate::where('id', $input['associate_id'])->update([
-                        'email' => $input['email'],
-                        'username' => $input['username'],
-                        'fullname' => $input['fullname'],
-                        'phone' => $input['phone'],
-                        'law_firm' => $input['law_firm'],
-                        'position' => $input['position'],
-                        'city' => $input['city'],
-                        'photo' => $input['photo'],
+                        'email'                  => $input['email'],
+                        'username'               => $input['username'],
+                        'fullname'               => $input['fullname'],
+                        'phone'                  => $input['phone'],
+                        'law_firm'               => $input['law_firm'],
+                        'position'               => $input['position'],
+                        'city'                   => $input['city'],
+                        'photo'                  => $input['photo'],
                         'law_society_ref_number' => $input['law_society_ref_number'],
-                        'association_number' => $input['association_number'],
+                        'association_number'     => $input['association_number'],
                     ]);
 
                     if (!empty($input['password'])) {
