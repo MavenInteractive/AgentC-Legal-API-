@@ -85,11 +85,11 @@ class CourtController extends Controller
 
             $court = new Court;
             $court = $court->where('id', $input['court_id']);
-            $result['court'] = $court->get();
+            $result['court'] = $court->first();
 
             $associate = new Associate;
             $associate = $associate->where('id', $input['associate_id']);
-            $result['associate'] = $associate->get();
+            $result['associate'] = $associate->first();
 
             $location = new AssociateLocation;
             $location = $location->where('court_id', $input['court_id']);
