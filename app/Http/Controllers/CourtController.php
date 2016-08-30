@@ -5,13 +5,14 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 use App\Http\Requests;
-use App\Service;
-use App\Court;
-use App\Schedule;
-use App\CourtDetails;
-use App\ServiceAssignees;
+use App\Associate;
 use App\AssociateLocation;
+use App\Court;
+use App\CourtDetails;
 use App\Favorite;
+use App\Schedule;
+use App\Service;
+use App\ServiceAssignees;
 
 class CourtController extends Controller
 {
@@ -72,6 +73,33 @@ class CourtController extends Controller
             }
         } catch (\Exception $error) {
             return response()->json(['error' => 'bad_request'], Response::HTTP_BAD_REQUEST);
+        }
+    }
+
+    public function schedules()
+    {
+        $result = array();
+
+        try {
+            $input = \Request::only('court_id', 'date', 'associate_id');
+
+            $court = new Court;
+            $court = $court->where('id', $input['court_id']);
+            $result['court'] = $court->get();
+
+            $associate = new Associate;
+            $associate = $associate->where('id', $input['associate_id']);
+            $result['associate'] = $associate->get();
+
+            $location = new AssociateLocation;
+            $location = $location->where('court_id', $input['court_id']);
+            $location = $location->where('associate_id', $input['associate_id']);
+            $location = $location->whereRaw("date(date_time) = '" . $input['date'] . "'");
+            $result['location'] = $location->get();
+
+            return response()->json($result);
+        } catch (\Exception $error) {
+            return response()->json(['error' => 'bad_request', 'msg' => $error], Response::HTTP_BAD_REQUEST);
         }
     }
 

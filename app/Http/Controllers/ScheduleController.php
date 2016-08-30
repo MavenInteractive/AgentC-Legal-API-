@@ -69,10 +69,10 @@ class ScheduleController extends Controller
                 ->where('id', $input['schedule_id'])
                 ->update([
                     'court_detail_id' => $input['court_detail_id'],
-                    'associate_id' => $input['associate_id'],
-                    'date_time' => $input['date_time'],
+                    'associate_id'    => $input['associate_id'],
+                    'date_time'       => $input['date_time'],
                     'request_type_id' => $input['request_type_id'],
-                    'notes' => $input['notes'],
+                    'notes'           => $input['notes'],
                 ]);
 
             $result       = Schedule::find($input['schedule_id']);
