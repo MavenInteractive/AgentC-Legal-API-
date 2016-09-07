@@ -189,6 +189,7 @@ class ServiceController extends Controller
                 'associate_id'    => $input['associate_id'],
                 'court_detail_id' => $input['court_detail_id'],
                 'date_time'       => $input['date_time'],
+                'insert_time'     => $input['date_time'],
                 'request_type_id' => $input['request_type_id'],
                 'notes'           => $input['notes'],
             ));
@@ -196,6 +197,7 @@ class ServiceController extends Controller
             $serviceId = Service::insertGetId(array(
                 'schedule_id'           => $insertedId,
                 'status'                => 0,
+                'insert_time'           => $input['date_time'],
                 'assigned_associate_id' => $input['associate_id'],
             ));
 
@@ -205,6 +207,7 @@ class ServiceController extends Controller
                 $assigneesId = ServiceAssignees::insertGetId(array(
                     'service_request_id' => $serviceId,
                     'associate_id'       => $a,
+                    'insert_time'        => $input['date_time'],
                 ));
 
                 $this->createNofication($a, $input['associate_id'], 'NotificationTypeAssignedTask');
