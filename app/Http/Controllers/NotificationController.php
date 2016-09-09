@@ -14,6 +14,7 @@ class NotificationController extends Controller
         try {
             $input = \Request::only('associate_id', 'offset', 'limit');
             $result = Notification::where('associate_id', $input['associate_id'])
+                ->where('notifications.other_associate_id', '>', '0')
                 ->leftJoin('associates', 'notifications.associate_id', '=', 'associates.id')
                 ->leftJoin('associates AS other', 'notifications.other_associate_id', '=', 'other.id')
                 ->select('notifications.*', 'associates.fullname', 'other.fullname AS other_associate')
