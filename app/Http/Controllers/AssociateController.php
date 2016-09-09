@@ -17,14 +17,16 @@ use Auth;
 
 class AssociateController extends Controller
 {
-    public function index(){
-
+    public function index()
+    {
         try {
-            $input = \Request::only('id','full');
+            $input = \Request::only('id', 'full');
             $result = Associate::where('id', $input['id'])->get();
-            if($input['full'] == 1 && count($result) > 0){
-                $favorites = Favorite::select('id')->where('associate_id',$input['id'])->get();
-                if(count($favorites) > 0){
+
+            if ($input['full'] == 1 && count($result) > 0) {
+                $favorites = Favorite::select('id')->where('associate_id', $input['id'])->get();
+
+                if (count($favorites) > 0) {
                     foreach ($favorites as $favorite) {
                         $favoriteIds[] = $favorite->id;
                     }
@@ -32,22 +34,21 @@ class AssociateController extends Controller
                 }
             }
 
-            if(count($result) > 0){
+            if (count($result) > 0) {
                 return response()->json($result);
-            }
-            else{
+            } else {
                 $result = array('0');
+
                 return response()->json($result);
             }
-
-
-		} catch (\Exception $error) {
-			return response()->json(['error' => 'bad_request'], Response::HTTP_BAD_REQUEST);
-		}
+        } catch (\Exception $error) {
+            return response()->json(['error' => 'bad_request'], Response::HTTP_BAD_REQUEST);
+        }
     }
 
-    public function submitAction(){
-        try{
+    public function submitAction()
+    {
+        try {
             $check = \Request::only('action');
             switch ($check['action']) {
                 case 'create':
@@ -55,66 +56,61 @@ class AssociateController extends Controller
 
                     $existing = $this->userCheck($input['email'], $input['username']);
 
-                    if($existing == 'true'){
-
-                        $insertedId = Associate::insertGetId(
-                                                array(
-                                                     'email'                  => $input['email'],
-                                                     'username'               => $input['username'],
-                                                     'password'               => \Hash::make($input['password']),
-                                                     'fullname'               => $input['fullname'],
-                                                     'phone'                  => $input['phone'],
-                                                     'law_firm'               => $input['law_firm'],
-                                                     'position'               => $input['position'],
-                                                     'city'                   => $input['city'],
-                                                     'law_society_ref_number' => $input['law_society_ref_number'],
-                                                     'association_number'     => $input['association_number'],
-                                                     'is_private'             => $input['is_private'],
-                                                     'photo'                  => $input['photo']
-                                                    )
-                                                );
+                    if ($existing == 'true') {
+                        $insertedId = Associate::insertGetId(array(
+                            'email'                  => $input['email'],
+                            'username'               => $input['username'],
+                            'password'               => \Hash::make($input['password']),
+                            'fullname'               => $input['fullname'],
+                            'phone'                  => $input['phone'],
+                            'law_firm'               => $input['law_firm'],
+                            'position'               => $input['position'],
+                            'city'                   => $input['city'],
+                            'law_society_ref_number' => $input['law_society_ref_number'],
+                            'association_number'     => $input['association_number'],
+                            'is_private'             => $input['is_private'],
+                            'photo'                  => $input['photo'],
+                        ));
 
                         $result = Associate::find($insertedId);
 
-                    //    $this->sendRegisterEmail($input['email']);
+                        $this->sendRegisterEmail($input['email']);
 
                         return response()->json($result);
-                    }
-                    else{
+                    } else {
+                        $result = array('message' => $existing);
 
-                        $result= array('message' => $existing);
                         return response()->json($result);
-
                     }
                     break;
-                case 'edit':
-                    $input = \Request::only('associate_id','email', 'username', 'password', 'fullname', 'phone', 'law_firm', 'position', 'city', 'law_society_ref_number', 'association_number','photo');
 
-                    $associate = Associate::where('id',$input['associate_id'])->update([
-                        'email'     => $input['email'],
-                        'username' => $input['username'],
-                        'fullname' => $input['fullname'],
-                        'phone' => $input['phone'],
-                        'law_firm' => $input['law_firm'],
-                        'position' => $input['position'],
-                        'city' => $input['city'],
-                        'photo' => $input['photo'],
+                case 'edit':
+                    $input = \Request::only('associate_id', 'email', 'username', 'password', 'fullname', 'phone', 'law_firm', 'position', 'city', 'law_society_ref_number', 'association_number', 'photo');
+
+                    $associate = Associate::where('id', $input['associate_id'])->update([
+                        'email'                  => $input['email'],
+                        'username'               => $input['username'],
+                        'fullname'               => $input['fullname'],
+                        'phone'                  => $input['phone'],
+                        'law_firm'               => $input['law_firm'],
+                        'position'               => $input['position'],
+                        'city'                   => $input['city'],
+                        'photo'                  => $input['photo'],
                         'law_society_ref_number' => $input['law_society_ref_number'],
-                        'association_number' => $input['association_number']
+                        'association_number'     => $input['association_number'],
                     ]);
 
-                    if(!empty($input['password'])){
-                        $associate = Associate::where('id',$input['associate_id'])->update([
+                    if (!empty($input['password'])) {
+                        $associate = Associate::where('id', $input['associate_id'])->update([
                             'password' => \Hash::make($input['password']),
                         ]);
                     }
 
-
                     $result = Associate::findOrFail($input['associate_id']);
 
-                    $favorites = Favorite::select('id')->where('associate_id',$input['associate_id'])->get();
+                    $favorites = Favorite::select('id')->where('associate_id', $input['associate_id'])->get();
 
-                    if(count($favorites)){
+                    if (count($favorites)) {
                         foreach ($favorites as $favorite) {
                             $favoriteIds[] = $favorite->id;
                         }
@@ -122,23 +118,20 @@ class AssociateController extends Controller
                         $result['favorites'] = $favoriteIds;
                     }
 
-
                     return response()->json($result);
-                    break;
 
                 case 'public':
-                    $input = \Request::only('associate_id','is_private');
+                    $input = \Request::only('associate_id', 'is_private');
 
-                    $associate = Associate::where('id',$input['associate_id'])->update([
+                    $associate = Associate::where('id', $input['associate_id'])->update([
                         'is_private' => $input['is_private'],
                     ]);
 
-
                     $result = Associate::findOrFail($input['associate_id']);
 
-                    $favorites = Favorite::select('id')->where('associate_id',$input['associate_id'])->get();
+                    $favorites = Favorite::select('id')->where('associate_id', $input['associate_id'])->get();
 
-                    if(count($favorites)){
+                    if (count($favorites)) {
                         foreach ($favorites as $favorite) {
                             $favoriteIds[] = $favorite->id;
                         }
@@ -146,22 +139,20 @@ class AssociateController extends Controller
                         $result['favorites'] = $favoriteIds;
                     }
 
-
                     return response()->json($result);
-                break;
-                case 'alert':
-                    $input = \Request::only('associate_id','alert_settings');
 
-                    $associate = Associate::where('id',$input['associate_id'])->update([
+                case 'alert':
+                    $input = \Request::only('associate_id', 'alert_settings');
+
+                    $associate = Associate::where('id', $input['associate_id'])->update([
                         'alert_settings' => $input['alert_settings'],
                     ]);
 
-
                     $result = Associate::findOrFail($input['associate_id']);
 
-                    $favorites = Favorite::select('id')->where('associate_id',$input['associate_id'])->get();
+                    $favorites = Favorite::select('id')->where('associate_id', $input['associate_id'])->get();
 
-                    if(count($favorites)){
+                    if (count($favorites)) {
                         foreach ($favorites as $favorite) {
                             $favoriteIds[] = $favorite->id;
                         }
@@ -169,82 +160,73 @@ class AssociateController extends Controller
                         $result['favorites'] = $favoriteIds;
                     }
 
-
                     return response()->json($result);
-                    break;
 
                 case 'view':
-                    $input = \Request::only('email','username','password','status');
-                    $result = Associate::select('email','username','password','status')
-                                       ->where('email',$input['email'])
-                                       ->where('username',$input['username'])
-                                       ->where('password',$input['password'])
-                                       ->where('status',$input['status'])
-                                       ->get();
+                    $input = \Request::only('email', 'username', 'password', 'status');
+                    $result = Associate::select('email', 'username', 'password', 'status')
+                        ->where('email', $input['email'])
+                        ->where('username', $input['username'])
+                        ->where('password', $input['password'])
+                        ->where('status', $input['status'])
+                        ->get();
 
                     return response()->json($result);
-                    break;
             }
-
         } catch (\Exception $error) {
             return response()->json(['error' => 'bad_request'], Response::HTTP_BAD_REQUEST);
         }
     }
 
-    public function showAll(){
-        try{
+    public function showAll()
+    {
+        try {
             $associates = Associate::all()->sortBy('fullname');
 
-
-
             foreach ($associates as $associate) {
-                $latitude = 0;
+                $latitude  = 0;
                 $longitude = 0;
-                $distance = 0;
-                $court_id = 0;
+                $distance  = 0;
+                $court_id  = 0;
 
-                $location = AssociateLocation::where('associate_id',$associate['id'])->orderBy('date_time','desc')->first();
+                $location = AssociateLocation::where('associate_id', $associate['id'])->orderBy('date_time', 'desc')->first();
 
-                if($location == NULL){
-                    $latitude = 0;
+                if ($location == null) {
+                    $latitude  = 0;
                     $longitude = 0;
-                    $distance = 0;
-                    $court_id = 0;
-
-                } else{
-
-                    $court = Court::where('id',$location['court_id'])->first();
-                    $latitude = $court['latitude'];
+                    $distance  = 0;
+                    $court_id  = 0;
+                } else {
+                    $court     = Court::where('id', $location['court_id'])->first();
+                    $latitude  = $court['latitude'];
                     $longitude = $court['longitude'];
-                    $distance = $location['distance'];
-                    $court_id = $location['court_id'];
-
+                    $distance  = $location['distance'];
+                    $court_id  = $location['court_id'];
                 }
 
                 $result[] = array(
-                    "id" => $associate["id"],
-                    "username" => $associate["username"],
-                    "password" => $associate["password"],
-                    "fullname" => $associate["fullname"],
-                    "email" => $associate["email"],
-                    "phone" => $associate["phone"],
-                    "photo" => $associate["photo"],
-                    "law_firm" => $associate["law_firm"],
-                    "position" => $associate["position"],
-                    "city" => $associate["city"],
-                    "law_society_ref_number" => $associate["law_society_ref_number"],
-                    "association_number" => $associate["association_number"],
-                    "is_private" => $associate["is_private"],
-                    "status" => $associate["status"],
-                    "alert_settings" => $associate["alert_settings"],
-                    "updated_at" => $associate["updated_at"],
-                    "insert_time" => $associate["insert_time"],
-                    "latitude" => $latitude,
-                    "longitude" => $longitude,
-                    "distance" => $distance,
-                    "court_id" => $court_id
+                    'id'                     => $associate['id'],
+                    'username'               => $associate['username'],
+                    'password'               => $associate['password'],
+                    'fullname'               => $associate['fullname'],
+                    'email'                  => $associate['email'],
+                    'phone'                  => $associate['phone'],
+                    'photo'                  => $associate['photo'],
+                    'law_firm'               => $associate['law_firm'],
+                    'position'               => $associate['position'],
+                    'city'                   => $associate['city'],
+                    'law_society_ref_number' => $associate['law_society_ref_number'],
+                    'association_number'     => $associate['association_number'],
+                    'is_private'             => $associate['is_private'],
+                    'status'                 => $associate['status'],
+                    'alert_settings'         => $associate['alert_settings'],
+                    'updated_at'             => $associate['updated_at'],
+                    'insert_time'            => $associate['insert_time'],
+                    'latitude'               => $latitude,
+                    'longitude'              => $longitude,
+                    'distance'               => $distance,
+                    'court_id'               => $court_id,
                 );
-
             }
 
             return response()->json($result);
@@ -253,76 +235,77 @@ class AssociateController extends Controller
         }
     }
 
-    public function forgot(){
-        try{
+    public function forgot()
+    {
+        try {
             $input = \Request::only('email');
             $this->sendForgotPasswordEmail($input['email']);
-        } catch(\Exception $error){
-            dd($error);
+        } catch (\Exception $error) {
             return response()->json(['error' => 'bad_request'], Response::HTTP_BAD_REQUEST);
         }
     }
 
-    public function sendForgotPasswordEmail($email){
-        $associate = Associate::where('email', $email)->first();
-        $newPassword = str_random(8);
+    public function sendForgotPasswordEmail($email)
+    {
+        $associate      = Associate::where('email', $email)->first();
+        $newPassword    = str_random(8);
         $hashedPassword = Hash::make($newPassword);
 
         DB::table('associates')->where('id', $associate->id)->update(['password' => $hashedPassword]);
 
-        Mail::send('emails.forgot_password', array('fullname' => $associate->fullname, 'password' => $newPassword, 'username' => $associate->username), function($message) use ($associate){
+        Mail::send('emails.forgot_password', array('fullname' => $associate->fullname, 'password' => $newPassword, 'username' => $associate->username), function ($message) use ($associate) {
             $message->to($associate->email, $associate->fullname)->subject('Forgot Password');
         });
 
         return;
     }
 
-    public function sendRegisterEmail($email){
+    public function sendRegisterEmail($email)
+    {
         $associate = Associate::where('email', $email)->first();
 
-        Mail::send('emails.register', array('fullname' => $associate->fullname), function($message) use ($associate){
+        Mail::send('emails.register', array('fullname' => $associate->fullname), function ($message) use ($associate) {
             $message->to($associate->email, $associate->fullname)->subject('Welcome to AgentC Legal');
         });
 
         return;
     }
 
-    public function userCheck($email, $username){
+    public function userCheck($email, $username)
+    {
+        $associate = Associate::where('email', '=', $email)->get();
 
-        $associate = Associate::where('email', '=',$email)->get();
-
-        //check if email is existing
-        if(count($associate) > 0){
-            return "Someone has already used the same email. ";
+        if (count($associate) > 0) {
+            return 'Someone has already used the same email. ';
         }
 
-        $associate = Associate::where('username', '=',$username)->get();
+        $associate = Associate::where('username', '=', $username)->get();
 
-        //check if username is existing
-        if(count($associate) > 0){
-            return "Someone has already used the same username.";
+        if (count($associate) > 0) {
+            return 'Someone has already used the same username.';
         }
 
         return true;
-
     }
 
-    public function loginAssociate(){
+    public function loginAssociate()
+    {
         $response = Authorizer::issueAccessToken();
-        if(Auth::user()){
-            $response['user_id'] = Auth::user()->id;
+
+        if (Auth::user()) {
+            $response['user_id']  = Auth::user()->id;
             $response['username'] = Auth::user()->username;
             $response['fullname'] = Auth::user()->fullname;
-            $response['email'] = Auth::user()->email;
-            $response['phone'] = Auth::user()->phone;
-            $response['photo'] = Auth::user()->photo;
+            $response['email']    = Auth::user()->email;
+            $response['phone']    = Auth::user()->phone;
+            $response['photo']    = Auth::user()->photo;
             $response['law_firm'] = Auth::user()->law_firm;
             $response['position'] = Auth::user()->position;
-            $response['city'] = Auth::user()->city;
+            $response['city']     = Auth::user()->city;
 
-            $favorites = Favorite::select('other_associate_id')->where('associate_id',$response['user_id'])->get();
+            $favorites = Favorite::select('other_associate_id')->where('associate_id', $response['user_id'])->get();
 
-            if(count($favorites)){
+            if (count($favorites)) {
                 foreach ($favorites as $favorite) {
                     $favoriteIds[] = $favorite->other_associate_id;
                 }
@@ -332,8 +315,7 @@ class AssociateController extends Controller
 
             return response()->json($response);
         }
+
         return response()->json($response);
     }
-
-
 }
