@@ -217,6 +217,8 @@ class ServiceController extends Controller
                     )
                 );
                 $this->createNofication($a, $input['associate_id'], 'NotificationTypeAssignedTask');
+
+                $this->sendStatusEmail($input['associate_id'], $a, $type)
             }
 
 
@@ -289,7 +291,6 @@ class ServiceController extends Controller
 
 			return response()->json($result);
         } catch (\Exception $error) {
-            dd($error);
             return response()->json(['error' => 'bad_request'], Response::HTTP_BAD_REQUEST);
         }
     }
@@ -333,11 +334,35 @@ class ServiceController extends Controller
         }
     }
 
-    public function sendStatusEmail($email){
-        $associate = Associate::where('email', $email)->first();
+    public function sendStatusEmail($sender_id, $reciever_id, $type){
 
-        Mail::send('emails.register', array('fullname' => $associate->fullname), function($message) use ($associate){
-            $message->to($associate->email, $associate->fullname)->subject('Welcome to AgentC Legal');
+        $sender = Associate::where('id', $sender_id)->first();
+        $reciever = Associate::where('id', $reciever_id)->first();
+
+
+        switch ($type) {
+            case '1':
+                $msg = $sender->fullname . " has sent you a service request"
+                break;
+
+            case '2':
+                $msg = $associate->fullname . " has accepted the service request you assign to him/her"
+                break;
+
+            case '3':
+                $msg = $associate->fullname . " has declined your service request"
+                break;
+
+            case '4':
+                $msg = $associate->fullname . " has completed the service request to him/her"
+                break;
+        }
+
+
+
+
+        Mail::send('emails.register', array('message' => $msg ), function($message) use ($reciever){
+            $message->to($associate->email, $associate->fullname)->subject('Notification');
         });
 
         return;

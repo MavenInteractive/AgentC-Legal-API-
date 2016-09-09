@@ -120,7 +120,7 @@ class PingController extends Controller
         return -1;
     }
 
-    public function getNearbyCourts($latitude, $longitude, $radius = 1.0, $distanceUnit = 111.045)
+    public function getNearbyCourts($latitude, $longitude, $radius = 10.0, $distanceUnit = 111.045)
     {
         $query = '
 SELECT id, name, address, latitude, longitude, distance
