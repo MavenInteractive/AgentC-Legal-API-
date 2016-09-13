@@ -220,7 +220,7 @@ class ServiceController extends Controller
                 );
                 $this->createNofication($a, $input['associate_id'], 'NotificationTypeAssignedTask');
 
-                $this->sendStatusEmail($input['associate_id'], $a, $type)
+                $this->sendStatusEmail($input['associate_id'], $a, $type);
             }
 
             $service_requests = DB::table('service_requests')
