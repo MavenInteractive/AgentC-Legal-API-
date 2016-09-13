@@ -211,13 +211,6 @@ class ServiceController extends Controller
                     'insert_time'        => $input['date_time'],
                 ));
 
-            foreach ($assigneesNumbers as $a) {
-                $assigneesId = ServiceAssignees::insertGetId(
-                    array(
-                        'service_request_id' => $serviceId,
-                        'associate_id'       => $a
-                    )
-                );
                 $this->createNofication($a, $input['associate_id'], 'NotificationTypeAssignedTask');
 
                 $this->sendStatusEmail($input['associate_id'], $a, $type);
@@ -236,9 +229,6 @@ class ServiceController extends Controller
             if (count($service_requests) > 0) {
                 $result = array();
 
-
-            if(count($service_requests) > 0){
-                $result = array();
                 foreach ($service_requests as $request) {
                     $assignees   = ServiceAssignees::where('service_request_id', $request->id)->get();
                     $assigneeIds = array();
@@ -295,7 +285,6 @@ class ServiceController extends Controller
 
             return response()->json($result);
         } catch (\Exception $error) {
-            dd($error);
             return response()->json(['error' => 'bad_request'], Response::HTTP_BAD_REQUEST);
         }
     }
@@ -327,7 +316,6 @@ class ServiceController extends Controller
 
                         $this->createNofication($input['associate_id'], 0, 'NotificationTypeDeclinedRequest');
                     break;
-
             }
         } catch (\Exception $error) {
             return response()->json(['error' => 'bad_request'], Response::HTTP_BAD_REQUEST);
@@ -341,7 +329,6 @@ class ServiceController extends Controller
             Service::where('id', $input['service_request_id'])->delete();
 
             $this->createNofication($input['associate_id'], 0, 'NotificationTypeAssignorCancelRequest');
-
         } catch (\Exception $error) {
             return response()->json(['error' => 'bad_request'], Response::HTTP_BAD_REQUEST);
         }
@@ -352,29 +339,25 @@ class ServiceController extends Controller
         $sender = Associate::where('id', $sender_id)->first();
         $reciever = Associate::where('id', $reciever_id)->first();
 
-
         switch ($type) {
             case '1':
-                $msg = $sender->fullname . " has sent you a service request"
+                $msg = $sender->fullname . " has sent you a service request";
                 break;
 
             case '2':
-                $msg = $associate->fullname . " has accepted the service request you assign to him/her"
+                $msg = $associate->fullname . " has accepted the service request you assign to him/her";
                 break;
 
             case '3':
-                $msg = $associate->fullname . " has declined your service request"
+                $msg = $associate->fullname . " has declined your service request";
                 break;
 
             case '4':
-                $msg = $associate->fullname . " has completed the service request to him/her"
+                $msg = $associate->fullname . " has completed the service request to him/her";
                 break;
         }
 
-
-
-
-        Mail::send('emails.register', array('message' => $msg ), function($message) use ($reciever){
+        Mail::send('emails.register', array('message' => $msg ), function($message) use ($reciever) {
             $message->to($associate->email, $associate->fullname)->subject('Notification');
         });
 
