@@ -6,8 +6,6 @@
 </head>
 <body>
     <div>
-        <span>Dear {{$fullname}}, </span>
-        <br />
         <p>
             {{$message}}
         </p>

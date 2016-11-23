@@ -7,6 +7,8 @@ use Illuminate\Http\Response;
 use App\Http\Requests;
 use App\Notification;
 
+use DB;
+
 class NotificationController extends Controller
 {
     public function index()
@@ -23,6 +25,22 @@ class NotificationController extends Controller
                 ->get();
 
             return response()->json($result);
+        } catch (\Exception $error) {
+            return response()->json(['error' => 'bad_request'], Response::HTTP_BAD_REQUEST);
+        }
+    }
+
+    public function read($id){
+        try{
+
+            $result = DB::table('notifications')
+                ->where('id', $id)
+                ->update([
+                    'read_at' => date('Y-m-d h:i:sa')
+                ]);
+
+            return response()->json($result);
+
         } catch (\Exception $error) {
             return response()->json(['error' => 'bad_request'], Response::HTTP_BAD_REQUEST);
         }

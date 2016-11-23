@@ -41,7 +41,7 @@ class FavoriteController extends Controller
     {
         $input = \Request::only('associate_id', 'other_associate_id');
 
-        $affectedRows = favorite::where('associate_id', $input['associate_id'])
+        $affectedRows = Favorite::where('associate_id', $input['associate_id'])
             ->where('other_associate_id', $input['other_associate_id'])
             ->delete();
 

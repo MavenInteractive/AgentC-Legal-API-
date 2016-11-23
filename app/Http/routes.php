@@ -45,6 +45,7 @@ Route::group(['prefix' => 'api/v1.0'], function() {
     Route::post('schedules',          ['as' => 'schedules.add',          'uses' => 'ScheduleController@add']);
 
     Route::get('notifications',      ['as' => 'notification.index',      'uses' => 'NotificationController@index']);
+    Route::get('notification/read/{id}', ['uses' => 'NotificationController@read']);
 
     Route::get('message-inboxes',    ['as' => 'message-inboxes.index',   'uses' => 'InboxController@index']);
     Route::post('message-inboxes',   ['as' => 'message-inboxes.add',     'uses' => 'InboxController@add']);
@@ -56,6 +57,7 @@ Route::group(['prefix' => 'api/v1.0'], function() {
     Route::get('service-request',    ['as' => 'service-request.index',   'uses' => 'ServiceController@index']);
     Route::put('service-request',    ['as' => 'service-request',         'uses' => 'ServiceController@status']);
     Route::delete('service-request', ['as' => 'service-request.delete',  'uses' => 'ServiceController@delete']);
+    Route::get('service-request/completed','ServiceController@getCompletedRequests');
 
     Route::get('ping',               ['as' => 'ping',                    'uses' => 'PingController@index']);
     Route::post('courtsched',        ['as' => 'courtsched',              'uses' => 'CourtController@sched']);
