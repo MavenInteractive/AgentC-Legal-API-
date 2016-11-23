@@ -41,7 +41,7 @@ class CourtController extends Controller
             if (date('Y-m-d') == date('Y-m-d', strtotime($input['date']))) {
                 $result = AssociateLocation::leftJoin('associates', 'associates.id', '=', 'associate_location.associate_id')
                     ->where('court_id', $input['court_id'])
-                    ->where('date_time', 'LIKE', '%'.$input['date'].'%')
+                    ->where('date_time', 'LIKE', '%'.date('Y-m-d', strtotime($input['date'])).'%')
                     ->get();
 
                 return response()->json($result);
@@ -50,7 +50,7 @@ class CourtController extends Controller
                     ->leftJoin('service_requests', 'service_requests.schedule_id', '=', 'schedules.id')
                     ->leftJoin('courts', 'courts.id', '=', 'court_details.court_id')
                     ->where('schedules.court_detail_id', $input['court_id'])
-                    ->where('schedules.date_time', 'LIKE', '%'.$input['date'].'%')
+                    ->where('schedules.date_time', 'LIKE', '%'.date('Y-m-d', strtotime($input['date'])).'%')
                     ->select('service_requests.*')
                     ->get();
 

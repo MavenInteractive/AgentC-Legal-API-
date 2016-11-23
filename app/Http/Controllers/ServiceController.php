@@ -213,7 +213,7 @@ class ServiceController extends Controller
 
                 $this->createNofication($a, $input['associate_id'], 'NotificationTypeAssignedTask');
 
-                $this->sendStatusEmail($input['associate_id'], $a, $type);
+                //$this->sendStatusEmail($input['associate_id'], $a, $type);
             }
 
             $service_requests = DB::table('service_requests')
@@ -226,9 +226,8 @@ class ServiceController extends Controller
                 ->select('service_requests.*', 'schedules.court_detail_id', 'schedules.associate_id', 'schedules.date_time', 'schedules.request_type_id', 'schedules.notes', 'court_details.type', 'court_details.level', 'court_details.court_id', 'courts.name', 'courts.latitude', 'courts.longitude', 'courts.address', 'request_types.name AS request_type', 'request_types.description AS request_description', 'associates.fullname', 'associates.photo', 'associates.law_firm')
                 ->get();
 
-            if (count($service_requests) > 0) {
+            if(count($service_requests) > 0){
                 $result = array();
-
                 foreach ($service_requests as $request) {
                     $assignees   = ServiceAssignees::where('service_request_id', $request->id)->get();
                     $assigneeIds = array();
@@ -334,33 +333,50 @@ class ServiceController extends Controller
         }
     }
 
-    public function sendStatusEmail($sender_id, $reciever_id, $type){
+    public function getCompletedRequests()
+    {
+        try{
+            $input = \Request::only('associate_id');
 
-        $sender = Associate::where('id', $sender_id)->first();
-        $reciever = Associate::where('id', $reciever_id)->first();
+            $service_requests = DB::table('service_requests')
+                                ->where('assigned_associate_id', $input['associate_id'])
+                                ->where('status', '3')
+                                ->get();
 
-        switch ($type) {
-            case '1':
-                $msg = $sender->fullname . " has sent you a service request";
-                break;
-
-            case '2':
-                $msg = $associate->fullname . " has accepted the service request you assign to him/her";
-                break;
-
-            case '3':
-                $msg = $associate->fullname . " has declined your service request";
-                break;
-
-            case '4':
-                $msg = $associate->fullname . " has completed the service request to him/her";
-                break;
+            return count($service_requests);
+        } catch (\Exception $error){
+            return response()->json(['error' => 'bad_request'], Response::HTTP_BAD_REQUEST);
         }
-
-        Mail::send('emails.register', array('message' => $msg ), function($message) use ($reciever) {
-            $message->to($associate->email, $associate->fullname)->subject('Notification');
-        });
-
-        return;
     }
+
+    // public function sendStatusEmail($sender_id, $reciever_id, $type){
+    //
+    //     $sender = Associate::where('id', $sender_id)->first();
+    //     $reciever = Associate::where('id', $reciever_id)->first();
+    //
+    //
+    //     switch ($type) {
+    //         case '1':
+    //             $msg = $sender->fullname . " has sent you a service request";
+    //             break;
+    //
+    //         case '2':
+    //             $msg = $associate->fullname . " has accepted the service request you assign to him/her";
+    //             break;
+    //
+    //         case '3':
+    //             $msg = $associate->fullname . " has declined your service request";
+    //             break;
+    //
+    //         case '4':
+    //             $msg = $associate->fullname . " has completed the service request to him/her";
+    //             break;
+    //     }
+
+    //     Mail::send('emails.register', array('message' => $msg ), function($message) use ($reciever){
+    //         $message->to($associate->email, $associate->fullname)->subject('Notification');
+    //     });
+    //
+    //     return;
+    // }
 }
