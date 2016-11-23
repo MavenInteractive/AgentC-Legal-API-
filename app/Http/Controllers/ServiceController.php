@@ -211,9 +211,16 @@ class ServiceController extends Controller
                     'insert_time'        => $input['date_time'],
                 ));
 
+            foreach ($assigneesNumbers as $a) {
+                $assigneesId = ServiceAssignees::insertGetId(
+                    array(
+                        'service_request_id' => $serviceId,
+                        'associate_id'       => $a
+                    )
+                );
                 $this->createNofication($a, $input['associate_id'], 'NotificationTypeAssignedTask');
 
-                //$this->sendStatusEmail($input['associate_id'], $a, $type);
+                $this->sendStatusEmail($input['associate_id'], $a, $type)
             }
 
             $service_requests = DB::table('service_requests')
@@ -225,6 +232,10 @@ class ServiceController extends Controller
                 ->where('schedules.id', $insertedId)
                 ->select('service_requests.*', 'schedules.court_detail_id', 'schedules.associate_id', 'schedules.date_time', 'schedules.request_type_id', 'schedules.notes', 'court_details.type', 'court_details.level', 'court_details.court_id', 'courts.name', 'courts.latitude', 'courts.longitude', 'courts.address', 'request_types.name AS request_type', 'request_types.description AS request_description', 'associates.fullname', 'associates.photo', 'associates.law_firm')
                 ->get();
+
+            if (count($service_requests) > 0) {
+                $result = array();
+
 
             if(count($service_requests) > 0){
                 $result = array();
@@ -284,7 +295,6 @@ class ServiceController extends Controller
 
             return response()->json($result);
         } catch (\Exception $error) {
-            dd($error);
             return response()->json(['error' => 'bad_request'], Response::HTTP_BAD_REQUEST);
         }
     }
@@ -336,7 +346,8 @@ class ServiceController extends Controller
         }
     }
 
-    public function getCompletedRequests(){
+    public function getCompletedRequests()
+    {
         try{
             $input = \Request::only('associate_id');
 
@@ -377,10 +388,7 @@ class ServiceController extends Controller
     //             $msg = $associate->fullname . " has completed the service request to him/her";
     //             break;
     //     }
-    //
-    //
-    //
-    //
+
     //     Mail::send('emails.register', array('message' => $msg ), function($message) use ($reciever){
     //         $message->to($associate->email, $associate->fullname)->subject('Notification');
     //     });
