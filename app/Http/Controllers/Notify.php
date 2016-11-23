@@ -22,7 +22,7 @@ trait Notify
         DB::table('notifications')->insert(array(
             'associate_id'       => $associate_id,
             'other_associate_id' => $other_associate_id,
-            'notification_type'  => $notifiction_type[$type],
+            'notification_type'  => $notifiction_type[$type]
         ));
 
         return;
