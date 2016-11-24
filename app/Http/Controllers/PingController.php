@@ -86,7 +86,8 @@ class PingController extends Controller
 
         $newRequests = DB::table('service_requests')
             ->leftJoin('schedules', 'service_requests.schedule_id', '=', 'schedules.id')
-            ->where('schedules.associate_id', $associateId)
+            ->leftJoin('service_request_assignees','service_requests.id','=','service_request_assignees.service_request_id')
+            ->where('service_request_assignees.associate_id', $associateId)
             ->select('service_requests.*')
             ->where('service_requests.insert_time', '>=',  $requestsTimestamp)
             ->get();
