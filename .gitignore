@@ -1,8 +1,7 @@
-/vendor
 /node_modules
 /public/storage
-/public/photos
-error_log
-Homestead.yaml
+/vendor
+/.idea
 Homestead.json
+Homestead.yaml
 .env

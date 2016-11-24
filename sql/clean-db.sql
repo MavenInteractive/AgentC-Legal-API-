@@ -1,9 +1,0 @@
-TRUNCATE TABLE associates;
-TRUNCATE TABLE associate_devices;
-TRUNCATE TABLE associate_location;
-TRUNCATE TABLE favorites;
-TRUNCATE TABLE message_inboxes;
-TRUNCATE TABLE notifications;
-TRUNCATE TABLE schedules;
-TRUNCATE TABLE service_requests;
-TRUNCATE TABLE service_request_assignees;
