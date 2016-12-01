@@ -301,7 +301,7 @@ class ServiceController extends Controller
                         ->select('service_requests.*','service_request_assignees.associate_id AS assignee_id')->first();
 
 
-                    $this->createNofication($request->assignee_id, $input['associate_id'], 'NotificationTypeAcceptedRequest');
+                    $this->createNofication($request->assigned_associate_id, $input['associate_id'], 'NotificationTypeAcceptedRequest');
                     break;
                 case '2':
                     DB::table('service_requests')
@@ -311,7 +311,7 @@ class ServiceController extends Controller
                         $request = DB::table('service_requests')->where('service_requests.id', $input['service_request_id'])                      ->leftJoin('service_request_assignees','service_request_assignees.service_request_id','=','service_requests.id')
                         ->select('service_requests.*','service_request_assignees.associate_id AS assignee_id')->first();
 
-                        $this->createNofication($request->assignee_id, $input['associate_id'], 'NotificationTypeCompletedRequest');
+                        $this->createNofication($request->assigned_associate_id, $input['associate_id'], 'NotificationTypeCompletedRequest');
                     break;
                 case '3':
                     DB::table('service_requests')
@@ -321,7 +321,7 @@ class ServiceController extends Controller
                         $request = DB::table('service_requests')->where('service_requests.id', $input['service_request_id'])                      ->leftJoin('service_request_assignees','service_request_assignees.service_request_id','=','service_requests.id')
                         ->select('service_requests.*','service_request_assignees.associate_id AS assignee_id')->first();
 
-                        $this->createNofication($request->assignee_id, $input['associate_id'], 'NotificationTypeDeclinedRequest');
+                        $this->createNofication($request->assigned_associate_id, $input['associate_id'], 'NotificationTypeDeclinedRequest');
                     break;
 
             }
