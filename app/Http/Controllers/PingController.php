@@ -148,7 +148,7 @@ AND c.longitude
 BETWEEN p.longpoint - (p.radius / (p.distance_unit * COS(RADIANS(p.latpoint))))
     AND p.longpoint + (p.radius / (p.distance_unit * COS(RADIANS(p.latpoint))))
 ) AS d
-WHERE distance <= radius AND distance > 0
+WHERE distance <= radius AND distance >= 0
 ORDER BY distance';
 
         $nearestLocations = DB::select(DB::raw($query));
