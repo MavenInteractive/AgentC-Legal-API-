@@ -300,7 +300,6 @@ class ServiceController extends Controller
                         $request = DB::table('service_requests')->where('service_requests.id', $input['service_request_id'])                      ->leftJoin('service_request_assignees','service_request_assignees.service_request_id','=','service_requests.id')
                         ->select('service_requests.*','service_request_assignees.associate_id AS assignee_id')->first();
 
-                        dd($request);
 
                     $this->createNofication($request->assignee_id, $input['associate_id'], 'NotificationTypeAcceptedRequest');
                     break;
