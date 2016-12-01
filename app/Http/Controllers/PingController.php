@@ -62,7 +62,7 @@ class PingController extends Controller
                 $hash['date_time'] = $timestamp;
 
                 if ($associateLocationId > 0) {
-                    $this->_tblAssociateLocation->updateRecord($associateLocationId, $hash);
+                    //$this->_tblAssociateLocation->updateRecord($associateLocationId, $hash);
 
                     DB::table('associate_location')->where('id', $associateLocationId)->update($hash);
                 } else {
