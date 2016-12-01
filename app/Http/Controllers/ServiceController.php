@@ -297,25 +297,37 @@ class ServiceController extends Controller
                         ->where('id', $input['service_request_id'])
                         ->update(['status' => '1']);
 
-                    $this->createNofication($input['associate_id'], 0, 'NotificationTypeAcceptedRequest');
+                        $request = DB::table('service_requests')->where('service_requests.id', $input['service_request_id'])                      ->leftJoin('service_request_assignees','service_request_assignees.service_request_id','=','service_requests.id')
+                        ->select('service_requests.*','service_request_assignees.associate_id AS assignee_id')->first();
+
+                        dd($request);
+
+                    $this->createNofication($request->assignee_id, $input['associate_id'], 'NotificationTypeAcceptedRequest');
                     break;
                 case '2':
                     DB::table('service_requests')
                         ->where('id', $input['service_request_id'])
                         ->update(['status' => '2']);
 
-                        $this->createNofication($input['associate_id'], 0, 'NotificationTypeCompletedRequest');
+                        $request = DB::table('service_requests')->where('service_requests.id', $input['service_request_id'])                      ->leftJoin('service_request_assignees','service_request_assignees.service_request_id','=','service_requests.id')
+                        ->select('service_requests.*','service_request_assignees.associate_id AS assignee_id')->first();
+
+                        $this->createNofication($request->assignee_id, $input['associate_id'], 'NotificationTypeCompletedRequest');
                     break;
                 case '3':
                     DB::table('service_requests')
                         ->where('id', $input['service_request_id'])
                         ->update(['status' => '3']);
 
-                        $this->createNofication($input['associate_id'], 0, 'NotificationTypeDeclinedRequest');
+                        $request = DB::table('service_requests')->where('service_requests.id', $input['service_request_id'])                      ->leftJoin('service_request_assignees','service_request_assignees.service_request_id','=','service_requests.id')
+                        ->select('service_requests.*','service_request_assignees.associate_id AS assignee_id')->first();
+
+                        $this->createNofication($request->assignee_id, $input['associate_id'], 'NotificationTypeDeclinedRequest');
                     break;
 
             }
         } catch (\Exception $error) {
+            dd($error);
             return response()->json(['error' => 'bad_request'], Response::HTTP_BAD_REQUEST);
         }
     }
