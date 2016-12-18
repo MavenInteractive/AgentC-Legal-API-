@@ -302,6 +302,8 @@ class ServiceController extends Controller
 
 
                     $this->createNofication($request->assigned_associate_id, $input['associate_id'], 'NotificationTypeAcceptedRequest');
+                    return response()->json(array('1'));
+
                     break;
                 case '2':
                     DB::table('service_requests')
@@ -312,6 +314,7 @@ class ServiceController extends Controller
                         ->select('service_requests.*','service_request_assignees.associate_id AS assignee_id')->first();
 
                         $this->createNofication($request->assigned_associate_id, $input['associate_id'], 'NotificationTypeCompletedRequest');
+                        return response()->json(array('1'));
                     break;
                 case '3':
                     DB::table('service_requests')
@@ -322,6 +325,7 @@ class ServiceController extends Controller
                         ->select('service_requests.*','service_request_assignees.associate_id AS assignee_id')->first();
 
                         $this->createNofication($request->assigned_associate_id, $input['associate_id'], 'NotificationTypeDeclinedRequest');
+                        return response()->json(array('1'));
                     break;
 
             }
