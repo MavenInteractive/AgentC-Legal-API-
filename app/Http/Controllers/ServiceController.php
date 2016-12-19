@@ -354,7 +354,7 @@ class ServiceController extends Controller
 
             $service_requests = DB::table('service_requests')
                                 ->where('assigned_associate_id', $input['associate_id'])
-                                ->where('status', '3')
+                                ->where('status', '2')
                                 ->get();
 
             return count($service_requests);
