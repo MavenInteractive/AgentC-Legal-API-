@@ -302,7 +302,7 @@ class ServiceController extends Controller
 
 
                     $this->createNofication($request->assigned_associate_id, $input['associate_id'], 'NotificationTypeAcceptedRequest');
-                    return response()->json(array('1'));
+                    return response()->json($request);
 
                     break;
                 case '2':
