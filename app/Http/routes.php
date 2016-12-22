@@ -55,7 +55,7 @@ Route::group(['prefix' => 'api/v1.0'], function() {
 
     Route::post('service-request',   ['as' => 'service-request.add',     'uses' => 'ServiceController@add']);
     Route::get('service-request',    ['as' => 'service-request.index',   'uses' => 'ServiceController@index']);
-    Route::put('service-request',    ['as' => 'service-request',         'uses' => 'ServiceController@status']);
+    Route::post('service-request-update',    ['as' => 'service-request',         'uses' => 'ServiceController@status']);
     Route::delete('service-request', ['as' => 'service-request.delete',  'uses' => 'ServiceController@delete']);
     Route::get('service-request/completed','ServiceController@getCompletedRequests');
 
