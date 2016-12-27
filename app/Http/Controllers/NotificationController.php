@@ -22,6 +22,7 @@ class NotificationController extends Controller
                 ->select('notifications.*', 'associates.fullname', 'other.fullname AS other_associate')
                 ->skip($input['offset'])
                 ->take($input['limit'])
+                ->orderBy('insert_time','DESC')
                 ->get();
 
             return response()->json($result);
