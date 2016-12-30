@@ -18,7 +18,7 @@ class ScheduleController extends Controller
         try {
             $input = \Request::only('associate_id', 'court_detail_id', 'from_date', 'to_date');
             if ($input['court_detail_id'] == 0) {
-                $result = Schedule::where('schedules.associate_id', $input['associate_id'])
+                $result = Schedule::where('service_request_assignees.associate_id', $input['associate_id'])
                     ->leftJoin('court_details', 'schedules.court_detail_id', '=', 'court_details.id')
                     ->leftJoin('courts', 'court_details.court_id', '=', 'courts.id')
 
