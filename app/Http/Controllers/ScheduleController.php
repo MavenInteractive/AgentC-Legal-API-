@@ -18,7 +18,7 @@ class ScheduleController extends Controller
         try {
             $input = \Request::only('associate_id', 'court_detail_id', 'from_date', 'to_date');
             if ($input['court_detail_id'] == 0) {
-                $result = Schedule::where('associate_id', $input['associate_id'])
+                $result = Schedule::where('schedules.associate_id', $input['associate_id'])
                     ->leftJoin('court_details', 'schedules.court_detail_id', '=', 'court_details.id')
                     ->leftJoin('courts', 'court_details.court_id', '=', 'courts.id')
 
@@ -34,8 +34,9 @@ class ScheduleController extends Controller
                     ->leftJoin('court_details', 'schedules.court_detail_id', '=', 'court_details.id')
                     ->leftJoin('courts', 'court_details.court_id', '=', 'courts.id')
                     ->leftJoin('request_types', 'schedules.request_type_id', '=', 'request_types.id')
+                    ->leftJoin('associates', 'schedules.associate_id', '=','associates.id')
                     ->whereBetween('date_time', array($input['from_date'], $input['to_date']))
-                    ->select('schedules.*', 'courts.name AS court_name', 'request_types.name AS request_type')
+                    ->select('schedules.*', 'courts.name AS court_name', 'request_types.name AS request_type','associates.fullname')
                     ->get();
             } else {
                 $result = Schedule::where('associate_id', $input['associate_id'])
