@@ -239,7 +239,15 @@ class AssociateController extends Controller
     {
         try {
             $input = \Request::only('email');
-            $this->sendForgotPasswordEmail($input['email']);
+
+            $associate = Associate::where('email', $input['email'])->first();
+
+            if(count($associate)){
+                $this->sendForgotPasswordEmail($input['email']);
+                return response()->json(['success' => 'password_sent_to_email']);
+            } else {
+                return response()->json(['error' => 'email_not_found']);
+            }
         } catch (\Exception $error) {
             return response()->json(['error' => 'bad_request'], Response::HTTP_BAD_REQUEST);
         }
