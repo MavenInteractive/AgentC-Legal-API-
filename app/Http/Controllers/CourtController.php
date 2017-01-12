@@ -42,9 +42,8 @@ class CourtController extends Controller
                 $result = AssociateLocation::leftJoin('associates', 'associates.id', '=', 'associate_location.associate_id')
                     ->where('court_id', $input['court_id'])
                     ->where('date_time', 'LIKE', '%'.date('Y-m-d', strtotime($input['date'])).'%')
-                //    ->get();
-
-                    ->orderBy('insert_time', 'desc')->first();
+                    ->groupBy('associate_location.associate_id')
+                    ->get();
 
                 return response()->json($result);
             } else {
