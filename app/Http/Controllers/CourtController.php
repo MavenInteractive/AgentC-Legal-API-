@@ -39,9 +39,13 @@ class CourtController extends Controller
             $input = \Request::only('court_id', 'date', 'associate_id');
 
             if (date('Y-m-d') == date('Y-m-d', strtotime($input['date']))) {
+                $date = new \DateTime;
+                $date->modify('-1 hour');
+                $formatted_date = $date->format('Y-m-d H:i:s');
                 $result = AssociateLocation::leftJoin('associates', 'associates.id', '=', 'associate_location.associate_id')
                     ->where('court_id', $input['court_id'])
                     ->where('date_time', 'LIKE', '%'.date('Y-m-d', strtotime($input['date'])).'%')
+                    ->where('insert_time','>=',$formatted_date)
                     ->groupBy('associate_location.associate_id')
                     ->get();
 
@@ -55,22 +59,22 @@ class CourtController extends Controller
                     ->select('service_requests.*')
                     ->get();
 
-                if (count($sched) > 0) {
-                    $sV = array();
+                // if (count($sched) > 0) {
+                //     $sV = array();
+                //
+                //     foreach ($sched as $sc) {
+                //         $sV[] = ServiceAssignees::leftJoin('associates', 'associates.id', '=', 'service_request_assignees.associate_id')
+                //             ->where('service_request_id', $sc['id'])
+                //             ->select('associates.*')
+                //             ->first();
+                //     }
+                //
+                //     $result = $sV;
+                // } else {
+                //     $result = array('0');
+                // }
 
-                    foreach ($sched as $sc) {
-                        $sV[] = ServiceAssignees::leftJoin('associates', 'associates.id', '=', 'service_request_assignees.associate_id')
-                            ->where('service_request_id', $sc['id'])
-                            ->select('associates.*')
-                            ->first();
-                    }
-
-                    $result = $sV;
-                } else {
-                    $result = array('0');
-                }
-
-                return response()->json($result);
+                return response()->json($sched);
             }
         } catch (\Exception $error) {
             return response()->json(['error' => 'bad_request'], Response::HTTP_BAD_REQUEST);
