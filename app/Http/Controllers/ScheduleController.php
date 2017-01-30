@@ -46,7 +46,7 @@ class ScheduleController extends Controller
                              ->select('service_requests.*','associates.fullname')
                      ->get();
 
-                $result = ['schedules' => $sched, 'service_requests' => $sched];
+                $result = ['schedules' => $sched, 'service_requests' => $service];
 
 
             } elseif ($input['associate_id'] == 0) {
