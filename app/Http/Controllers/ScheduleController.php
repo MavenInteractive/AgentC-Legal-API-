@@ -34,9 +34,10 @@ class ScheduleController extends Controller
                  $sched = Schedule::where('service_request_assignees.associate_id', $input['associate_id'])
                          ->leftJoin('service_requests','schedules.id', '=', 'service_requests.schedule_id')
                          ->leftJoin('service_request_assignees','service_requests.id', '=', 'service_request_assignees.service_request_id')
+                         ->leftJoin('request_types', 'schedules.request_type_id', '=', 'request_types.id')
                          ->leftJoin('associates', 'service_request_assignees.associate_id', '=','associates.id')
                          ->whereBetween('schedules.date_time', array($input['from_date'], $input['to_date']))
-                         ->select('schedules.*','associates.fullname')->get();
+                         ->select('schedules.*','request_types.name AS request_type','associates.fullname')->get();
 
                  $service =  Service::where('service_request_assignees.associate_id',$input['associate_id'])
                              ->leftJoin('service_request_assignees','service_requests.id', '=', 'service_request_assignees.service_request_id')
