@@ -54,9 +54,11 @@ class CourtController extends Controller
                 $sched = Schedule::leftJoin('court_details', 'court_details.id', '=', 'schedules.court_detail_id')
                     ->leftJoin('service_requests', 'service_requests.schedule_id', '=', 'schedules.id')
                     ->leftJoin('courts', 'courts.id', '=', 'court_details.court_id')
+
+                    ->leftJoin('associates', 'service_requests.assigned_associate_id', '=','associates.id')
                     ->where('courts.id', $input['court_id'])
                     ->where('schedules.date_time', '>=',date('Y-m-d', strtotime($input['date'])))
-                    ->select('service_requests.*')
+                    ->select('service_requests.*','associates.fullname')
                     ->get();
 
                 // if (count($sched) > 0) {
