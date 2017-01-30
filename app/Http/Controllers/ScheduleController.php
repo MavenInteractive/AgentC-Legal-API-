@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Http\Requests;
 use App\Schedule;
+use App\Service;
 use App\CourtDetails;
 use App\Court;
 use App\RequestType;
@@ -33,12 +34,15 @@ class ScheduleController extends Controller
                  $sched = Schedule::where('service_request_assignees.associate_id', $input['associate_id'])
                          ->leftJoin('service_requests','schedules.id', '=', 'service_requests.schedule_id')
                          ->leftJoin('service_request_assignees','service_requests.id', '=', 'service_request_assignees.service_request_id')
+                         ->leftJoin('associates', 'service_request_assignees.associate_id', '=','associates.id')
                          ->whereBetween('schedules.date_time', array($input['from_date'], $input['to_date']))
-                         ->select('schedules.*')->get();
+                         ->select('schedules.*','associates.fullname')->get();
 
-                 $service =  Service::where('assigned_associate_id',$input['associate_id'])
-                             ->whereBetween('schedules.date_time', array($input['from_date'], $input['to_date']))
-                             ->select('service_requests.*')
+                 $service =  Service::where('service_request_assignees.associate_id',$input['associate_id'])
+                             ->leftJoin('service_request_assignees','service_requests.id', '=', 'service_request_assignees.service_request_id')
+                             ->leftJoin('associates', 'service_request_assignees.associate_id', '=','associates.id')
+                             ->whereBetween('service_requests.insert_time', array($input['from_date'], $input['to_date']))
+                             ->select('service_requests.*','associates.fullname')
                      ->get();
 
                 $result = ['schedules' => $sched, 'service_requests' => $sched];
