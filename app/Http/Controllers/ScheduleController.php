@@ -31,15 +31,14 @@ class ScheduleController extends Controller
                 //     ->whereBetween('schedules.date_time', array($input['from_date'], $input['to_date']))
                 //     ->select('schedules.*', 'courts.name AS court_name', 'request_types.name AS request_type','associates.fullname')
                 //     ->get();
-                 $sched = Schedule::where('service_request_assignees.associate_id', $input['associate_id'])
+                 $sched = Schedule::where('schedules.associate_id', $input['associate_id'])
                  ->leftJoin('court_details', 'schedules.court_detail_id', '=', 'court_details.id')
                       ->leftJoin('courts', 'court_details.court_id', '=', 'courts.id')
                          ->leftJoin('service_requests','schedules.id', '=', 'service_requests.schedule_id')
-                         ->leftJoin('service_request_assignees','service_requests.id', '=', 'service_request_assignees.service_request_id')
                          ->leftJoin('request_types', 'schedules.request_type_id', '=', 'request_types.id')
-                         ->leftJoin('associates', 'service_request_assignees.associate_id', '=','associates.id')
+                         ->leftJoin('associates', 'schedules.associate_id', '=','associates.id')
                          ->whereBetween('schedules.date_time', array($input['from_date'], $input['to_date']))
-                         ->select('schedules.*','courts.name','courts.latitude','courts.longitude','courts.address','court_details.type','court_details.level','court_details.court_id','request_types.name AS request_type','request_type.description','associates.fullname')->get();
+                         ->select('schedules.*','courts.name','courts.latitude','courts.longitude','courts.address','court_details.type','court_details.level','court_details.court_id','request_types.name AS request_type','request_types.description','associates.fullname')->get();
 
                  $service =  Service::where('service_request_assignees.associate_id',$input['associate_id'])
                              ->leftJoin('service_request_assignees','service_requests.id', '=', 'service_request_assignees.service_request_id')
