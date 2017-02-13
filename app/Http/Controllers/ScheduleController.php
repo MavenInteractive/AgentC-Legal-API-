@@ -32,6 +32,11 @@ class ScheduleController extends Controller
                 //     ->select('schedules.*', 'courts.name AS court_name', 'request_types.name AS request_type','associates.fullname')
                 //     ->get();
                 $acceptedServices = Service::where('status','1')->select('schedule_id')->get()->toArray();
+
+                $acceptedIds= array();
+                foreach ($acceptedServices as $as) {
+                    $acceptedIds[] = $acceptedServices->schedule_id;
+                }
                 $sched = array();
                  $scheds = Schedule::where('schedules.associate_id', $input['associate_id'])
                  ->leftJoin('court_details', 'schedules.court_detail_id', '=', 'court_details.id')
@@ -43,7 +48,7 @@ class ScheduleController extends Controller
                          ->select('schedules.*','courts.name AS court_name','courts.latitude','courts.longitude','courts.address','court_details.type','court_details.level','court_details.court_id','request_types.name AS request_type','request_types.description','associates.fullname')->get();
 
                 foreach ($scheds as $s) {
-                    if(in_array($s->id,$acceptedServices)){
+                    if(in_array($s->id,$acceptedIds)){
                         $sched[] = $s;
                     }
                 }
