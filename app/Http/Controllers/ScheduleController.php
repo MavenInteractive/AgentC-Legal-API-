@@ -31,7 +31,7 @@ class ScheduleController extends Controller
                 //     ->whereBetween('schedules.date_time', array($input['from_date'], $input['to_date']))
                 //     ->select('schedules.*', 'courts.name AS court_name', 'request_types.name AS request_type','associates.fullname')
                 //     ->get();
-                $acceptedServices = Service::where('status','1')->select('schedule_id')->get();
+                $acceptedServices = Service::where('status','1')->select('schedule_id')->get()->toArray();
                 $sched = array();
                  $scheds = Schedule::where('schedules.associate_id', $input['associate_id'])
                  ->leftJoin('court_details', 'schedules.court_detail_id', '=', 'court_details.id')
