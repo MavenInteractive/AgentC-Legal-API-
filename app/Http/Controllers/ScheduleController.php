@@ -38,7 +38,8 @@ class ScheduleController extends Controller
                     $acceptedIds[] = $as->schedule_id;
                 }
                 $sched = array();
-                 $scheds = Schedule::where('schedules.associate_id', $input['associate_id'])
+
+                $scheds = Schedule::where('schedules.associate_id', $input['associate_id'])
                  ->leftJoin('court_details', 'schedules.court_detail_id', '=', 'court_details.id')
                       ->leftJoin('courts', 'court_details.court_id', '=', 'courts.id')
                          ->leftJoin('service_requests','schedules.id', '=', 'service_requests.schedule_id')
@@ -54,6 +55,7 @@ class ScheduleController extends Controller
                 }
 
                  $service =  Service::where('service_request_assignees.associate_id',$input['associate_id'])
+                             ->where('status','0')
                              ->leftJoin('service_request_assignees','service_requests.id', '=', 'service_request_assignees.service_request_id')
                              ->leftJoin('associates', 'service_request_assignees.associate_id', '=','associates.id')
                              ->leftJoin('schedules','schedules.id', '=', 'service_requests.schedule_id')
