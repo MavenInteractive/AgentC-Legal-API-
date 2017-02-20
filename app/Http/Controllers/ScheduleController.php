@@ -62,8 +62,8 @@ class ScheduleController extends Controller
                              ->leftJoin('request_types', 'schedules.request_type_id', '=', 'request_types.id')
                              ->leftJoin('court_details', 'schedules.court_detail_id', '=', 'court_details.id')
                              ->leftJoin('courts', 'court_details.court_id', '=', 'courts.id')
-                        //     ->whereBetween('schedules.date_time', array($input['from_date'], $input['to_date']))
-                             ->whereBetween('schedules.date_time', array(date('Y-m-d', strtotime($input['from_date']))." 00:00:00", date('Y-m-d', strtotime($input['to_date']))." 23:59:59"))
+                             ->whereBetween('schedules.date_time', array($input['from_date'], $input['to_date']))
+                        //    ->whereBetween('schedules.date_time', array(date('Y-m-d', strtotime($input['from_date']))." 00:00:00", date('Y-m-d', strtotime($input['to_date']))." 23:59:59"))
                              ->select('service_requests.*','courts.name AS court_name','request_types.name AS request_type','schedules.date_time','associates.fullname')
                      ->get();
 
