@@ -187,7 +187,7 @@ class ServiceController extends Controller
             $input = \Request::only('associate_id', 'court_detail_id', 'date_time', 'request_type_id', 'notes', 'assignees');
 
             $insertedId = Schedule::insertGetId(array(
-                'associate_id'    => $input['associate_id'],
+                'associate_id'    => $input['assignees'],
                 'court_detail_id' => $input['court_detail_id'],
                 'date_time'       => $input['date_time'],
                 'request_type_id' => $input['request_type_id'],
