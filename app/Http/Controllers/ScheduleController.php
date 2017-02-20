@@ -49,7 +49,7 @@ class ScheduleController extends Controller
                          ->select('schedules.*','courts.name AS court_name','courts.latitude','courts.longitude','courts.address','court_details.type','court_details.level','court_details.court_id','request_types.name AS request_type','request_types.description','associates.fullname')->get();
 
                 foreach ($scheds as $s) {
-                    if(!in_array($s->id,$acceptedIds)){
+                    if(in_array($s->id,$acceptedIds)){
                         $sched[] = $s;
                     }
                 }
