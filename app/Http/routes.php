@@ -62,4 +62,6 @@ Route::group(['prefix' => 'api/v1.0'], function() {
     Route::get('ping',               ['as' => 'ping',                    'uses' => 'PingController@index']);
     Route::post('courtsched',        ['as' => 'courtsched',              'uses' => 'CourtController@sched']);
     Route::post('courts/schedules',  ['as' => 'courts.schedules',        'uses' => 'CourtController@schedules']);
+
+    Route::get('nearby',             ['as' => 'near',           'uses' => 'ServiceController@getNearbyAssociates']);
 });

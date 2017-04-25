@@ -366,6 +366,35 @@ class ServiceController extends Controller
 
     }
 
+
+    public function getNearbyAssociates(){
+        try {
+            $input = \Request::only('associate_id','court_id','date');
+
+            if (date('Y-m-d') == date('Y-m-d', strtotime($input['date']))) {
+                $date = new \DateTime;
+                $date->modify('-1 hour');
+                $formatted_date = $date->format('Y-m-d H:i:s');
+                $result = AssociateLocation::leftJoin('associates', 'associates.id', '=', 'associate_location.associate_id')
+                    ->where('court_id', $input['court_id'])
+                //    ->where('date_time', 'LIKE', '%'.date('Y-m-d', strtotime($input['date'])).'%')
+                    ->where('insert_time','>=',$formatted_date)
+                    ->groupBy('associate_location.associate_id')
+                    ->select('associates.*')
+                    ->get();
+
+                return response()->json($result);
+            } else {
+                $result = array(0);
+                return response()->json($result);
+            }
+
+        } catch (Exception $error) {
+            return response()->json(['error' => 'bad_request'], Response::HTTP_BAD_REQUEST);
+        }
+
+    }
+
     // public function sendStatusEmail($sender_id, $reciever_id, $type){
     //
     //     $sender = Associate::where('id', $sender_id)->first();
