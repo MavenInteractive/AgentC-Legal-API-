@@ -378,7 +378,7 @@ class ServiceController extends Controller
                 $result = AssociateLocation::leftJoin('associates', 'associates.id', '=', 'associate_location.associate_id')
                     ->where('court_id', $input['court_id'])
                 //    ->where('date_time', 'LIKE', '%'.date('Y-m-d', strtotime($input['date'])).'%')
-                    ->where('insert_time','>=',$formatted_date)
+                //    ->where('insert_time','>=',$formatted_date)
                     ->groupBy('associate_location.associate_id')
                     ->select('associates.*')
                     ->get();
