@@ -371,7 +371,11 @@ class ServiceController extends Controller
         try {
             $input = \Request::only('associate_id','court_id','date');
 
-            if (date('Y-m-d') == date('Y-m-d', strtotime($input['date']))) {
+            $dateInput = $input['date'];
+            $createDate = new DateTime($dateInput);
+            $strip = $createDate->format('Y-m-d');
+
+            if (date('Y-m-d') == $strip) {
                 $date = new \DateTime;
                 $date->modify('-1 hour');
                 $formatted_date = $date->format('Y-m-d H:i:s');
